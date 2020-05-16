@@ -1,0 +1,27 @@
+name: ssh-to-action
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/Use-SSH.yml'
+    watch:
+        types: [started]
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: SSH connection to Actions
+        uses: 1orz/ssh-action@master
+
+      - name: Upload Flies
+        uses: actions/upload-artifact@master
+        if: always()
+        with:
+          name: Files
+          path: upload/
