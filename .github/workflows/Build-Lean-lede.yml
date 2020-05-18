@@ -12,7 +12,7 @@ jobs:
   x86:
     runs-on: ubuntu-latest
     steps:    
-    - name: Initialization environment.
+    - name: Prepare environment.
       env:
           DEBIAN_FRONTEND: noninteractive
       run: |
