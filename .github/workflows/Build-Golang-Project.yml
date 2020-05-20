@@ -26,11 +26,16 @@ jobs:
       run: |
         git clone https://github.com/gogs/gogs.git
         sudo apt update -qq
-        sudo apt install -y libpam0g-dev
+        sudo apt install -qq upx libpam0g-dev
         cd gogs
         node -v
         go version
         go build -tags "sqlite pam cert" -o gogs
+    - name: UPX Binary Files to Reduce Size.
+      if: success()
+      run: |
+        cd gogs
+        upx -9 gogs -q
     - name: Upload Flies to Github Actions
       uses: actions/upload-artifact@master
       if: success()
@@ -63,6 +68,11 @@ jobs:
         node -v
         go version
         TAGS="bindata sqlite sqlite_unlock_notify" make build
+    - name: UPX Binary Files to Reduce Size.
+      if: success()
+      run: |
+        cd gitea
+        upx -9 gitea -q
     - name: Upload Flies to Github Actions
       uses: actions/upload-artifact@master
       if: success()
