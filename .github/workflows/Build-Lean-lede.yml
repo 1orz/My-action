@@ -22,16 +22,7 @@ jobs:
         sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
-
-        sudo mkdir -p -m 777 /mnt/openwrt/bin /mnt/openwrt/build_dir/host /mnt/openwrt/build_dir/hostpkg /mnt/openwrt/dl /mnt/openwrt/feeds /mnt/openwrt/staging_dir
-        ln -s /mnt/openwrt/bin ./bin
-        mkdir -p ./build_dir/host && ln -s /mnt/openwrt/build_dir/host ./build_dir/host
-        mkdir -p ./build_dir/host && ln -s /mnt/openwrt/build_dir/hostpkg ./build_dir/hostpkg
-        ln -s /mnt/openwrt/dl ./dl
-        ln -s /mnt/openwrt/feeds ./feeds
-        ln -s /mnt/openwrt/staging_dir ./staging_dir
         sudo df -h
-
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/.bashrc >> ~/.bashrc
         sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
     - name: Clone source and install
@@ -65,10 +56,10 @@ jobs:
     - name: Single-core compile
       if: failure()
       run: |
-        df -h
+        sudo df -h
         cd lede
         make -j1 V=s
-        df -h
+        sudo df -h
     - name: Upload entire bin directory
       uses: actions/upload-artifact@master
       if: always()
@@ -140,16 +131,16 @@ jobs:
       run: |
         cd lede
         echo -e "$(nproc) thread compile"
-        df -h
+        sudo df -h
         make -j$(nproc)
-        df -h
+        sudo df -h
     - name: Single-core compile
       if: failure()
       run: |
-        df -h
+        sudo df -h
         cd lede
         make -j1 V=s
-        df -h
+        sudo df -h
     - name: Upload entire bin directory
       uses: actions/upload-artifact@master
       if: always()
@@ -219,16 +210,16 @@ jobs:
       run: |
         cd lede
         echo -e "$(nproc) thread compile"
-        df -h
+        sudo df -h
         make -j$(nproc)
-        df -h
+        sudo df -h
     - name: Single-core compile
       if: failure()
       run: |
-        df -h
+        sudo df -h
         cd lede
         make -j1 V=s
-        df -h
+        sudo df -h
     - name: Upload entire bin directory
       uses: actions/upload-artifact@master
       if: always()
@@ -292,16 +283,16 @@ jobs:
       run: |
         cd lede
         echo -e "$(nproc) thread compile"
-        df -h
+        sudo df -h
         make -j$(nproc)
-        df -h
+        sudo df -h
     - name: Single-core compile
       if: failure()
       run: |
-        df -h
+        sudo df -h
         cd lede
         make -j1 V=s
-        df -h
+        sudo df -h
     - name: Only Upload Packages to Main Download Station
       if: success()
       run: |
