@@ -136,7 +136,34 @@ jobs:
     - name: Upload Frp's Binary Files to Main Download Station.	
       if: success()	
       run: |	
-        cd frp/release/packages	
-        zip -r frp.zip .	
+        cd frp/release/packages
+        zip -r frp.zip .
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Frp" -F "file=@frp.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+  V2Ray:
+    name: Build V2Ray
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14
+    - name: Clone V2Ray From Github and Build
+      run: |
+        export GOPATH=$HOME/go
+        go get -insecure -u v2ray.com/core/...
+        cd $GOPATH/src/v2ray.com/core
+        go version
+        bazel build --action_env=GOPATH=$GOPATH --action_env=PATH=$PATH //release:all
+    - name: Upload Flies to Github Actions
+      uses: actions/upload-artifact@master
+      if: success()	
+      with:	
+       name: V2Ray
+       path: go/src/v2ray.com/core/bazel-bin/release/*.zip
+    - name: Upload V2Ray's Binary Files to Main Download Station.
+      if: success()	
+      run: |	
+        cd go/src/v2ray.com/core/bazel-bin/release/
+        zip -r v2ray.zip .	
+        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@v2ray.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
 
