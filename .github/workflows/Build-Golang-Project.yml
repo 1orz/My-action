@@ -166,6 +166,6 @@ jobs:
       if: success()	
       run: |	
         cd ${{ env.V2BIN }}
-        zip -r v2ray.zip .	
+        zip -r v2ray.zip . -i *.zip
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@v2ray.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
 
