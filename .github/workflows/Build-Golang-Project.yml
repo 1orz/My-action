@@ -112,7 +112,7 @@ jobs:
       if: success()
       run: |
         cd nps
-        zip -r Nps.zip . -i *.tar.gz
+        zip -r -o Nps.zip . -i *.tar.gz
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Nps" -F "file=@Nps.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         curl --socks5 "${{ secrets.PROXY_ADDR }}" -U "${{ secrets.PROXY_USER }}" -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/Nps" -F "file=@Nps.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
@@ -140,8 +140,8 @@ jobs:
       if: success()	
       run: |	
         cd frp/release/packages
-        zip -r Frp.zip .
-        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Frp" -F "file=@frp.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        zip -r -o Frp.zip .
+        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Frp" -F "file=@Frp.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         curl --socks5 "${{ secrets.PROXY_ADDR }}" -U "${{ secrets.PROXY_USER }}" -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/Frp" -F "file=@Frp.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
   V2Ray:
@@ -171,7 +171,7 @@ jobs:
       if: success()	
       run: |	
         cd ${{ env.V2BIN }}
-        zip -r V2Ray.zip . -i *.zip
+        zip -r -o V2Ray.zip . -i *.zip
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@V2Ray.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         curl --socks5 "${{ secrets.PROXY_ADDR }}" -U "${{ secrets.PROXY_USER }}" -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@V2Ray.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
