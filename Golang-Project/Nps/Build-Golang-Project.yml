@@ -1,0 +1,178 @@
+name: Build-Golang-Project
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/Build-Golang-Project.yml'
+  schedule:
+        - cron: 0 */2 * * *
+
+jobs:
+  Gogs:
+    name: Build Gogs
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Clone Gogs From Github and Build
+      if: success()
+      run: |
+        git clone https://github.com/gogs/gogs.git
+        sudo apt update -qq
+        sudo apt install -qq upx libpam0g-dev
+        cd gogs
+        node -v
+        go version
+        go build -tags "sqlite pam cert" -o gogs
+    - name: UPX Binary Files to Reduce Size.
+      if: success()
+      run: |
+        cd gogs
+        upx -9 gogs -q
+    - name: Upload Flies to Github Actions
+      uses: actions/upload-artifact@master
+      if: success()
+      with:
+       name: Gogs
+       path: gogs/gogs       
+    - name: Upload Gogs's Binary Files to Main Download Station.
+      if: success()
+      run: |
+        cd gogs
+        zip -o Gogs.zip gogs
+        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Gogs" -F "file=@Gogs.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 "${{ secrets.PROXY_ADDR }}" -U "${{ secrets.PROXY_USER }}" -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/Gogs" -F "file=@Gogs.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+
+  Gitea:
+    name: Build Gitea
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Clone Gitea From Github and Build
+      run: |
+        git clone https://github.com/go-gitea/gitea.git
+        cd gitea
+        node -v
+        go version
+        TAGS="bindata sqlite sqlite_unlock_notify" make build
+    - name: UPX Binary Files to Reduce Size.
+      if: success()
+      run: |
+        cd gitea
+        upx -9 gitea -q
+    - name: Upload Flies to Github Actions
+      uses: actions/upload-artifact@master
+      if: success()
+      with:
+       name: Gitea
+       path: gitea/gitea
+    - name: Upload Gitea's Binary Files to Main Download Station.
+      if: success()
+      run: |
+        cd gitea
+        zip -o Gitea.zip gitea
+        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Gitea" -F "file=@Gitea.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 "${{ secrets.PROXY_ADDR }}" -U "${{ secrets.PROXY_USER }}" -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/Gitea" -F "file=@Gitea.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+
+  Nps:
+    name: Build Nps
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14
+    - name: Clone Nps From Github and Build
+      run: |
+        git clone https://github.com/ehang-io/nps.git
+        cd nps
+        go version
+        bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/Golang-Project/Nps/build.sh) 
+    - name: Upload Flies to Github Actions
+      uses: actions/upload-artifact@master
+      if: success()
+      with:
+       name: Nps
+       path: nps/*.tar.gz
+    - name: Upload Nps's Binary Files to Main Download Station.
+      if: success()
+      run: |
+        cd nps
+        zip -r -o Nps.zip . -i *.tar.gz
+        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Nps" -F "file=@Nps.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 "${{ secrets.PROXY_ADDR }}" -U "${{ secrets.PROXY_USER }}" -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/Nps" -F "file=@Nps.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+
+  Frp:
+    name: Build Frp
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14
+    - name: Clone Frp From Github and Build
+      run: |
+        git clone https://github.com/fatedier/frp.git
+        cd frp
+        go version
+        bash package.sh
+    - name: Upload Flies to Github Actions
+      uses: actions/upload-artifact@master
+      if: success()	
+      with:	
+       name: Frp	
+       path: frp/release/packages/	
+    - name: Upload Frp's Binary Files to Main Download Station.	
+      if: success()	
+      run: |	
+        cd frp/release/packages
+        zip -r -o Frp.zip .
+        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Frp" -F "file=@frp.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 "${{ secrets.PROXY_ADDR }}" -U "${{ secrets.PROXY_USER }}" -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/Frp" -F "file=@Frp.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+
+  V2Ray:
+    name: Build V2Ray
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14
+    - name: Clone V2Ray From Github and Build
+      run: |
+        export GOPATH=$HOME/go
+        go get -insecure -u v2ray.com/core/...
+        cd $GOPATH/src/v2ray.com/core
+        go version
+        bazel build --action_env=GOPATH=$GOPATH --action_env=PATH=$PATH //release:all
+        cd bazel-bin/release
+        echo "::set-env name=V2BIN::$(pwd)"
+    - name: Upload Flies to Github Actions
+      uses: actions/upload-artifact@master
+      if: success()	
+      with:	
+       name: V2Ray
+       path: ${{ env.V2BIN }}/*.zip
+    - name: Upload V2Ray's Binary Files to Main Download Station.
+      if: success()	
+      run: |	
+        cd ${{ env.V2BIN }}
+        zip -r -o V2Ray.zip . -i *.zip
+        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@V2Ray.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 "${{ secrets.PROXY_ADDR }}" -U "${{ secrets.PROXY_USER }}" -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@V2Ray.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+
+
