@@ -8,13 +8,9 @@ on:
       - '.github/workflows/Use-SSH.yml'
     
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-      
       - name: Set up Go 1.14
         uses: actions/setup-go@v1
         with:
