@@ -19,6 +19,7 @@ jobs:
         sudo swapoff /swapfile
         sudo rm -rf /swapfile /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         docker rmi `docker images -q`
+        sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf
         sudo -E apt-get -qq autoremove --purge
@@ -26,12 +27,14 @@ jobs:
         sudo df -h
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/.bashrc >> ~/.bashrc
         sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+        
     - name: Clone source and install
       run: |
         git clone https://github.com/coolsnowwolf/lede
         cd lede
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+        
     - name: Download and Load custom configuration
       run: |
         cd lede
@@ -39,6 +42,7 @@ jobs:
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
         ./scripts/feeds install -a
         make defconfig
+        
     - name: Download package
       run: |
         cd lede
@@ -46,6 +50,7 @@ jobs:
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
         sudo df -h
+        
     - name: Multi-core compile
       run: |
         cd lede
@@ -54,6 +59,7 @@ jobs:
         
         make -j$(nproc)
         sudo df -h
+        
     - name: Single-core compile
       if: failure()
       run: |
@@ -61,38 +67,43 @@ jobs:
         cd lede
         make -j1 V=s
         sudo df -h
+        
     - name: Upload entire bin directory
       uses: actions/upload-artifact@master
       if: always()
       with:
         name: LEDE-x86_64-bin-dictionary
         path: lede/bin
+        
     - name: Only Upload Packages to Main Download Station
       if: success()
       run: |
         cd lede/bin
         zip -r x86_64-Package.zip . -i *.ipk
-        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean-Package" -F "file=@x86_64-Package.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}    
+        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean-Package" -F "file=@x86_64-Package.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "Router/LEDE/x86_64/Lean-Package" -F "file=@x86_64-Package.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+        
     - name: Setup Upload dictionary
       if: always()
       run: |
         cd lede/bin/targets/*/*
         rm -rf packages
         echo "::set-env name=FIRMWARE::$(pwd)"
+        
     - name: Only Upload firmware (Without packages)
       uses: actions/upload-artifact@master
       if: always()
       with:
         name: x86_64
         path: ${{ env.FIRMWARE }}
+        
     - name: Upload firmware to Main Download Station (Without packages)
       if: success()
       run: |
         cd lede/bin/targets/*/*
         zip -r -o x86_64.zip ./
-        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean-ssrplus" -F "file=@x86_64.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
-   
-   
+        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean" -F "file=@x86_64.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "Router/LEDE/x86_64/Lean" -F "file=@x86_64.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
   Raspberry3:
     runs-on: ubuntu-latest
@@ -104,18 +115,21 @@ jobs:
         docker rmi `docker images -q`
         sudo swapoff /swapfile
         sudo rm -rf /swapfile /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/.bashrc >> ~/.bashrc
         sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+        
     - name: Clone source and install
       run: |
         git clone https://github.com/coolsnowwolf/lede
         cd lede
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+        
     - name: Download and Load custom configuration
       run: |
         cd lede
@@ -123,12 +137,14 @@ jobs:
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
         ./scripts/feeds install -a
         make defconfig
+        
     - name: Download package
       run: |
         cd lede
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
+        
     - name: Multi-core compile
       run: |
         cd lede
@@ -136,6 +152,7 @@ jobs:
         sudo df -h
         make -j$(nproc)
         sudo df -h
+        
     - name: Single-core compile
       if: failure()
       run: |
@@ -143,36 +160,43 @@ jobs:
         cd lede
         make -j1 V=s
         sudo df -h
+        
     - name: Upload entire bin directory
       uses: actions/upload-artifact@master
       if: always()
       with:
         name: LEDE-RaspberryPi-bin-dictionary
         path: lede/bin
+        
     - name: Only Upload Packages to Main Download Station
       if: success()
       run: |
         cd lede/bin/targets/*/*
-        zip -r rpi3b-Package.zip . -i *.ipk
-        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi/Lean-Package" -F "file=@rpi3b-Package.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        zip -r rpi3-Package.zip . -i *.ipk
+        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi3/Lean-Package" -F "file=@rpi3-Package.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "Router/LEDE/RaspberryPi3/Lean-Package" -F "file=@rpi3-Package.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+        
     - name: Setup Upload dictionary
       if: always()
       run: |
         cd lede/bin
         rm -rf packages
         echo "::set-env name=FIRMWARE::$(pwd)"
+        
     - name: Only Upload firmware (Without packages)
       uses: actions/upload-artifact@master
       if: always()
       with:
         name: RaspberryPi3b
         path: ${{ env.FIRMWARE }}
+        
     - name: Upload firmware to Main Download Station (Without packages)
       if: success()
       run: |
         cd lede/bin/targets/*/*
-        zip -r -o -q rpi-sp.zip ./
-        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi/Lean-ssrplus" -F "file=@rpi-sp.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        zip -r -o -q rpi3.zip ./
+        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi3/Lean" -F "file=@rpi3.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "Router/LEDE/RaspberryPi3/Lean" -F "file=@rpi3.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
   x86_pure:
     runs-on: ubuntu-latest
@@ -184,18 +208,21 @@ jobs:
         docker rmi `docker images -q`
         sudo swapoff /swapfile
         sudo rm -rf /swapfile /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/.bashrc >> ~/.bashrc
         sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+        
     - name: Clone source and install
       run: |
         git clone https://github.com/coolsnowwolf/lede
         cd lede
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+        
     - name: Download and Load custom configuration
       run: |
         cd lede
@@ -203,12 +230,14 @@ jobs:
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
         ./scripts/feeds install -a
         make defconfig
+        
     - name: Download package
       run: |
         cd lede
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
+        
     - name: Multi-core compile
       run: |
         cd lede
@@ -216,6 +245,7 @@ jobs:
         sudo df -h
         make -j$(nproc)
         sudo df -h
+        
     - name: Single-core compile
       if: failure()
       run: |
@@ -223,30 +253,35 @@ jobs:
         cd lede
         make -j1 V=s
         sudo df -h
+        
     - name: Upload entire bin directory
       uses: actions/upload-artifact@master
       if: always()
       with:
         name: LEDE-x86_64-bin-dictionary
         path: lede/bin
+        
     - name: Setup Upload dictionary
       if: always()
       run: |
         cd lede/bin/targets/*/*
         rm -rf packages
         echo "::set-env name=FIRMWARE::$(pwd)"
+        
     - name: Only Upload firmware (Without packages)
       uses: actions/upload-artifact@master
       if: success()
       with:
         name: x86_64_pure
-        path: ${{ env.FIRMWARE }}        
+        path: ${{ env.FIRMWARE }}       
+        
     - name: Upload firmware to Main Download Station (Without packages)
       if: success()
       run: |
         cd lede/bin/targets/*/*
         zip -r -o x86_64-pure.zip ./
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean-pure" -F "file=@x86_64-pure.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "Router/LEDE/x86_64/Lean-pure" -F "file=@x86_64-pure" ${{ secrets.CN_STATION_PROCESSOR }}
 
   RaspberryPi4:
     runs-on: ubuntu-latest
@@ -258,18 +293,21 @@ jobs:
         docker rmi `docker images -q`
         sudo swapoff /swapfile
         sudo rm -rf /swapfile /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/.bashrc >> ~/.bashrc
         sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+        
     - name: Clone source and install
       run: |
         git clone https://github.com/coolsnowwolf/lede
         cd lede
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+        
     - name: Download and Load custom configuration
       run: |
         cd lede
@@ -277,12 +315,14 @@ jobs:
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
         ./scripts/feeds install -a
         make defconfig
+        
     - name: Download package
       run: |
         cd lede
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
+        
     - name: Multi-core compile
       run: |
         cd lede
@@ -290,6 +330,7 @@ jobs:
         sudo df -h
         make -j$(nproc)
         sudo df -h
+        
     - name: Single-core compile
       if: failure()
       run: |
@@ -297,27 +338,36 @@ jobs:
         cd lede
         make -j1 V=s
         sudo df -h
+        
     - name: Only Upload Packages to Main Download Station
       if: success()
       run: |
         cd lede/bin/targets/*/*
         zip -r rpi4-Package.zip . -i *.ipk
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi4/Lean-Package" -F "file=@rpi4-Package.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "Router/LEDE/RaspberryPi4/Lean-Package" -F "file=@rpi4-Package.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+
+        
     - name: Setup Upload dictionary
       if: always()
       run: |
         cd lede/bin
         rm -rf packages
         echo "::set-env name=FIRMWARE::$(pwd)"
+        
     - name: Only Upload firmware (Without packages)
       uses: actions/upload-artifact@master
       if: always()
       with:
         name: RaspberryPi4
         path: ${{ env.FIRMWARE }}
+        
     - name: Upload firmware to Main Download Station (Without packages)
       if: success()
       run: |
         cd lede/bin/targets/*/*
         zip -r -o -q rpi4.zip ./
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi4/Lean-ssrplus" -F "file=@rpi4.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "Router/LEDE/RaspberryPi4/Lean" -F "file=@rpi4.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+
+        
