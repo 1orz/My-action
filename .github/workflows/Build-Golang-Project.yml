@@ -48,7 +48,7 @@ jobs:
         cd gogs
         zip -o Gogs.zip gogs
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Gogs" -F "file=@Gogs.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
-        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F 'location=Software/ALL/Gogs' -F "file=@Gogs.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/Gogs" -F "file=@Gogs.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
   Gitea:
     name: Build Gitea
@@ -86,7 +86,7 @@ jobs:
         cd gitea
         zip -o Gitea.zip gitea
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Gitea" -F "file=@Gitea.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
-        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F 'location=Software/ALL/Gitea' -F "file=@Gitea.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/Gitea" -F "file=@Gitea.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
   Nps:
     name: Build Nps
@@ -114,7 +114,7 @@ jobs:
         cd nps
         zip -r -o Nps.zip . -i *.tar.gz
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Nps" -F "file=@Nps.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
-        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F 'location=Software/ALL/Nps' -F "file=@Nps.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/Nps" -F "file=@Nps.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
   Frp:
     name: Build Frp
@@ -142,7 +142,7 @@ jobs:
         cd frp/release/packages
         zip -r -o Frp.zip .
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Frp" -F "file=@Frp.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
-        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F 'location=Software/ALL/Frp' -F "file=@Frp.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/Frp" -F "file=@Frp.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
   V2Ray:
     name: Build V2Ray
@@ -173,6 +173,6 @@ jobs:
         cd ${{ env.V2BIN }}
         zip -r -o V2Ray.zip . -i *.zip
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@V2Ray.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
-        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F 'location=Software/ALL/V2Ray' -F "file=@V2Ray.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@V2Ray.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
 
