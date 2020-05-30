@@ -5,7 +5,9 @@
 如果下载站挂了 你也可以直接在[Github Actions](https://github.com/1orz/My-action/actions)里直接下载。(需要登录Github账号才能下载)
 
 列表的所有编译成品均自动上传到下载站。
-下载站地址 https://down.ssrc.win/
+国内下载站(推荐) https://down.cloudorz.com/
+
+备用下载站(日本) https://down.ssrc.win/
 
 # 项目自动编译状态
 **提示：passing绿色标志为状态正常**
@@ -19,4 +21,18 @@
 | Gogs① | 全平台 | 🔥🔥🔥 |  ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/gogs/gogs) | 自动更新 | 每2h |
 | Nps① | 全平台 | 🔥🔥🔥 |  ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/ehang-io/nps) | 自动更新 | 每2h |
 | Frp① | 全平台 | 🔥🔥🔥 |  ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/fatedier/frp) | 自动更新 | 每2h |
+
+# 赞助
+
+**为了给各位热爱软路由的折腾当们良好的下载体验，提升用户的下载速度。现在下载站已经迁移到国内。**
+
+**但由于服务器租用费用高昂...花掉了我大部分生活费同时，也占用了我大量的业余时间。**
+
+**So.若您觉得好用并愿意支持本站长期发展下去。获得最佳的下载体验，可以考虑捐助本站··请作者喝杯咖啡~~~**
+
+**你们的支持就是我的动力！ **
+
+#### 捐助方式
+
+![支付宝捐助](img/alipay.png)![微信捐助](img/wepay.png)
 
