@@ -281,7 +281,7 @@ jobs:
         cd lede/bin/targets/*/*
         zip -r -o x86_64-pure.zip ./
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean-pure" -F "file=@x86_64-pure.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
-        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean-pure" -F "file=@x86_64-pure" ${{ secrets.CN_STATION_PROCESSOR }}
+        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean-pure" -F "file=@x86_64-pure.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
   RaspberryPi4:
     runs-on: ubuntu-latest
