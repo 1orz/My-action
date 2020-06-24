@@ -156,11 +156,12 @@ jobs:
       run: |
         sudo apt update -qq
         sudo apt install -qq upx jq git file pkg-config zip g++ zlib1g-dev unzip python openssl tree
-        export GOPATH=$HOME/go
+        mkdir go
+        export GOPATH=go
         go get -insecure -u v2ray.com/core/...
         cd $GOPATH/src/v2ray.com/core
         go version
-        bazel build --sandbox_debug --action_env=GOPATH=$GOPATH --action_env=PATH=$PATH //release:all
+        sudo bazel build --sandbox_debug --action_env=GOPATH=$GOPATH --action_env=PATH=$PATH //release:all
         cd bazel-bin/release
         echo "::set-env name=V2BIN::$(pwd)"
     - name: Upload Flies to Github Actions
