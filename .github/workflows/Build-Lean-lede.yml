@@ -170,7 +170,7 @@ jobs:
     - name: Only Upload Packages to Main Download Station
       if: success()
       run: |
-        cd lede/bin/targets/*/*
+        cd lede/bin
         zip -r rpi3-Package.zip . -i *.ipk
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi3/Lean-Package" -F "file=@rpi3-Package.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi3/Lean-Package" -F "file=@rpi3-Package.zip" ${{ secrets.CN_STATION_PROCESSOR }}
@@ -256,7 +256,7 @@ jobs:
     - name: Only Upload Packages to Main Download Station
       if: success()
       run: |
-        cd lede/bin/targets/*/*
+        cd lede/bin
         zip -r rpi4-Package.zip . -i *.ipk
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi4/Lean-Package" -F "file=@rpi4-Package.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi4/Lean-Package" -F "file=@rpi4-Package.zip" ${{ secrets.CN_STATION_PROCESSOR }}
