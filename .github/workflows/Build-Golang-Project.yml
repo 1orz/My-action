@@ -160,7 +160,7 @@ jobs:
         go get -insecure -u v2ray.com/core/...
         cd $GOPATH/src/v2ray.com/core
         go version
-        bazel build --action_env=GOPATH=$GOPATH --action_env=PATH=$PATH //release:all
+        bazel build --sandbox_debug --action_env=GOPATH=$GOPATH --action_env=PATH=$PATH //release:all
         cd bazel-bin/release
         echo "::set-env name=V2BIN::$(pwd)"
     - name: Upload Flies to Github Actions
