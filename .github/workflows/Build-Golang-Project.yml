@@ -157,7 +157,7 @@ jobs:
         sudo apt update -qq
         sudo apt install -qq upx jq git file pkg-config zip g++ zlib1g-dev unzip python openssl tree
         mkdir go
-        export GOPATH=go
+        export GOPATH=$PWD/go
         go get -insecure -u v2ray.com/core/...
         cd $GOPATH/src/v2ray.com/core
         go version
