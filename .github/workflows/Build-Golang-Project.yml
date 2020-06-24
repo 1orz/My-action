@@ -144,38 +144,38 @@ jobs:
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/Linux/Frp" -F "file=@Frp.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/Frp" -F "file=@Frp.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
-  V2Ray:
-    name: Build V2Ray
-    runs-on: ubuntu-latest
-    steps:
-    - name: Set up Go 1.14
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.14
-    - name: Clone V2Ray From Github and Build
-      run: |
-        sudo apt update -qq
-        sudo apt install -qq upx jq git file pkg-config zip g++ zlib1g-dev unzip python openssl tree
-        mkdir go
-        export GOPATH=$PWD/go
-        go get -insecure -u v2ray.com/core/...
-        cd $GOPATH/src/v2ray.com/core
-        go version
-        sudo bazel build --sandbox_debug --action_env=GOPATH=$GOPATH --action_env=PATH=$PATH //release:all
-        cd bazel-bin/release
-        echo "::set-env name=V2BIN::$(pwd)"
-    - name: Upload Flies to Github Actions
-      uses: actions/upload-artifact@master
-      if: success()	
-      with:	
-       name: V2Ray
-       path: ${{ env.V2BIN }}/*.zip
-    - name: Upload V2Ray's Binary Files to Main Download Station.
-      if: success()	
-      run: |	
-        cd ${{ env.V2BIN }}
-        zip -r -o V2Ray.zip . -i *.zip
-        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@V2Ray.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
-        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@V2Ray.zip" ${{ secrets.CN_STATION_PROCESSOR }}
+#  V2Ray:
+#    name: Build V2Ray
+#    runs-on: ubuntu-latest
+#    steps:
+#    - name: Set up Go 1.14
+#      uses: actions/setup-go@v1
+#      with:
+#        go-version: 1.14
+#    - name: Clone V2Ray From Github and Build
+#      run: |
+#        sudo apt update -qq
+#        sudo apt install -qq upx jq git file pkg-config zip g++ zlib1g-dev unzip python openssl tree
+#        mkdir go
+#        export GOPATH=$PWD/go
+#        go get -insecure -u v2ray.com/core/...
+#        cd $GOPATH/src/v2ray.com/core
+#        go version
+#        sudo bazel build --sandbox_debug --action_env=GOPATH=$GOPATH --action_env=PATH=$PATH //release:all
+#        cd bazel-bin/release
+#        echo "::set-env name=V2BIN::$(pwd)"
+#    - name: Upload Flies to Github Actions
+#      uses: actions/upload-artifact@master
+#      if: success()	
+#      with:	
+#       name: V2Ray
+#       path: ${{ env.V2BIN }}/*.zip
+#    - name: Upload V2Ray's Binary Files to Main Download Station.
+#      if: success()	
+#      run: |	
+#        cd ${{ env.V2BIN }}
+#        zip -r -o V2Ray.zip . -i *.zip
+#        curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@V2Ray.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+#        curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL/V2Ray" -F "file=@V2Ray.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
 
