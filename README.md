@@ -14,15 +14,15 @@
 **提示：passing绿色标志为状态正常**
 **如果为falling也并不代表所有项目全部编译失败，请到Actions查看**
 
-| 项目名称 | 运行平台 | 下载热度 | 编译状态 | 源码地址 | 更新方式 | 更新频率 |
+| 项目名称 | 运行平台 | 编译状态 | 源码地址 | 更新方式 | 更新频率 |
 | :------: | :------: | :------: | :------: | :------: | :------: | :------: |
-| Lean's lede(SSR-Plus/Passwall精简版) | x86/树莓派3b/3b+/4b | 🔥🔥🔥🔥🔥 | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Lean-lede?label=) |[Github](https://github.com/coolsnowwolf/lede) | 自动更新 | 每4h |
-| Lean's lede(ssrplus/passwall完整版) | x86/树莓派3b/3b+/4b | 🔥🔥🔥🔥🔥 | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Lean-lede?label=) |[Github](https://github.com/coolsnowwolf/lede) | 自动更新 | 每4h |
-| OpenWrt-官版 | x86 | 🔥🔥🔥 | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/openwrt/openwrt) | 自动更新 | 每4h |
-| Gitea① | 全平台 | 🔥🔥🔥 |  ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/go-gitea/gitea) | 自动更新 | 每2h |
-| Gogs① | 全平台 | 🔥🔥🔥 |  ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/gogs/gogs) | 自动更新 | 每2h |
-| Nps① | 全平台 | 🔥🔥🔥 |  ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/ehang-io/nps) | 自动更新 | 每2h |
-| Frp① | 全平台 | 🔥🔥🔥 |  ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/fatedier/frp) | 自动更新 | 每2h |
+| Lean's lede(SSR-Plus/Passwall精简版) | x86/树莓派3b/3b+/4b | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Lean-lede?label=) |[Github](https://github.com/coolsnowwolf/lede) | 自动更新 | 每4h |
+| Lean's lede(ssrplus/passwall完整版) | x86/树莓派3b/3b+/4b | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Lean-lede?label=) |[Github](https://github.com/coolsnowwolf/lede) | 自动更新 | 每4h |
+| OpenWrt-官版 | x86 | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/openwrt/openwrt) | 自动更新 | 每4h |
+| Gitea① | 全平台 |  ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/go-gitea/gitea) | 自动更新 | 每2h |
+| Gogs① | 全平台 |  ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/gogs/gogs) | 自动更新 | 每2h |
+| Nps① | 全平台 |  ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/ehang-io/nps) | 自动更新 | 每2h |
+| Frp① | 全平台 |  ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Golang-Project?label=) |[Github](https://github.com/fatedier/frp) | 自动更新 | 每2h |
 
 # 赞助
 
