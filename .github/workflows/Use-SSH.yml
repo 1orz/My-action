@@ -5,8 +5,7 @@ on:
     branches:
       - master
     paths:
-      - '.github/workflows/Use-SSH.yml'
-    
+      - '.github/workflows/Use-SSH.yml'    
 jobs:
   build:
     runs-on: ubuntu-latest
