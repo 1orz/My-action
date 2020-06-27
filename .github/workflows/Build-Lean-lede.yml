@@ -100,7 +100,7 @@ jobs:
       if: success()
       run: |
         cd lede/bin/targets/*/*
-        zip -r -o x86_64.zip ./
+        zip -r -o x86_64.zip . -i *.gz
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean" -F "file=@x86_64.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean" -F "file=@x86_64.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
@@ -193,7 +193,7 @@ jobs:
       if: success()
       run: |
         cd lede/bin/targets/*/*
-        zip -r -o -q rpi3.zip ./
+        zip -r -o -q rpi3.zip . -i *.gz
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi3/Lean" -F "file=@rpi3.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi3/Lean" -F "file=@rpi3.zip" ${{ secrets.CN_STATION_PROCESSOR }}
 
@@ -280,6 +280,6 @@ jobs:
       if: success()
       run: |
         cd lede/bin/targets/*/*
-        zip -r -o -q rpi4.zip ./
+        zip -r -o -q rpi4.zip . -i *.gz
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi4/Lean" -F "file=@rpi4.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi4/Lean" -F "file=@rpi4.zip" ${{ secrets.CN_STATION_PROCESSOR }}
