@@ -1,0 +1,31 @@
+name: ssh-to-action
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/Use-SSH.yml'    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+      
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - name: SSH connection to Actions
+        uses: 1orz/ssh-action@master
+
+      - name: Upload Flies
+        uses: actions/upload-artifact@master
+        if: always()
+        with:
+          name: Files
+          path: upload/
