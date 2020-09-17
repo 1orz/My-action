@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/workflows/Build-Golang-Project.yml'
   schedule:
-        - cron: 0 */2 * * *
+        - cron: 0 */12 * * *
 
 jobs:
   Gogs:
