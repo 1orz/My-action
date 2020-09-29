@@ -23,19 +23,15 @@ jobs:
       run: |
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/prenv.sh)
         
-    - name: Clone source and install
+    - name: Clone Source
       run: |
         git clone https://github.com/coolsnowwolf/lede
-        cd lede
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
         
     - name: Download and Load custom configuration
       run: |
         cd lede
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/x86_64/.config >.config
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
-        ./scripts/feeds install -a
         make defconfig
         
     - name: Download package
@@ -100,19 +96,15 @@ jobs:
       run: |
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/prenv.sh)
         
-    - name: Clone source and install
+    - name: Clone Source
       run: |
         git clone https://github.com/coolsnowwolf/lede
-        cd lede
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
         
     - name: Download and Load custom configuration
       run: |
         cd lede
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/rpi/.config >.config
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
-        ./scripts/feeds install -a
         make defconfig
         
     - name: Download package
@@ -178,19 +170,15 @@ jobs:
       run: |
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/prenv.sh)
         
-    - name: Clone source and install
+    - name: Clone Source
       run: |
         git clone https://github.com/coolsnowwolf/lede
-        cd lede
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
         
     - name: Download and Load custom configuration
       run: |
         cd lede
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/rpi32/.config >.config
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
-        ./scripts/feeds install -a
         make defconfig
         
     - name: Download package
@@ -254,19 +242,15 @@ jobs:
       run: |
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/prenv.sh)
         
-    - name: Clone source and install
+    - name: Clone Source
       run: |
         git clone https://github.com/coolsnowwolf/lede
-        cd lede
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
         
     - name: Download and Load custom configuration
       run: |
         cd lede
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/rpi4/.config >.config
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
-        ./scripts/feeds install -a
         make defconfig
         
     - name: Download package
@@ -323,19 +307,15 @@ jobs:
       run: |
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/prenv.sh)
         
-    - name: Clone source and install
+    - name: Clone Source
       run: |
         git clone https://github.com/coolsnowwolf/lede
-        cd lede
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
         
     - name: Download and Load custom configuration
       run: |
         cd lede
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/mt7621/.config >.config
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
-        ./scripts/feeds install -a
         make defconfig
         
     - name: Download package
