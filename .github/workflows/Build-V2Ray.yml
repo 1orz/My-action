@@ -1,0 +1,97 @@
+name: Build-V2ray
+on:
+  workflow_dispatch:
+  schedule:
+        - cron: 0 */4 * * *
+jobs:
+  build:
+    strategy:
+      matrix:
+        goos: [windows, linux]
+        goarch: [amd64, 386]
+        exclude:
+          - goarch: 386
+            goos: dragonfly
+          - goarch: 386
+            goos: darwin
+        include:
+          - goos: linux
+            goarch: arm
+            goarm: 7
+          - goos: linux
+            goarch: arm64
+          - goos: linux
+            goarch: mipsle
+          - goos: linux
+            goarch: mips
+          # - goos: android
+          #   goarch: arm64
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+    env:
+      GOOS: ${{ matrix.goos }}
+      GOARCH: ${{ matrix.goarch }}
+      GOARM: ${{ matrix.goarm }}
+      CGO_ENABLED: 0
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          repository: v2fly/v2ray-core
+          fetch-depth: 0
+
+      - name: Show workflow information
+        id: get_filename
+        run: |
+          export _NAME=$(jq ".[\"$GOOS-$GOARCH$GOARM\"].friendlyName" -r < release/friendly-filenames.json)
+          echo "GOOS: $GOOS, GOARCH: $GOARCH, GOARM: $GOARM, RELEASE_NAME: $_NAME"
+          echo "::set-output name=ASSET_NAME::$_NAME"
+          echo "ASSET_NAME=$_NAME" >> $GITHUB_ENV
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15.6
+
+      - name: Get project dependencies
+        run: go mod download
+
+      - name: Build V2Ray
+        run: |
+          sudo -E apt-get -qq remove upx
+          wget https://github.com/upx/upx/releases/download/v3.96/upx-3.96-amd64_linux.tar.xz
+          tar -xvf upx-3.96-amd64_linux.tar.xz
+          sudo cp upx-3.96-amd64_linux/upx /usr/bin/upx
+          sudo chmod +x /usr/bin/upx
+          mkdir -p build_assets
+          go build -v -o build_assets/v2ray -trimpath -ldflags "-s -w -buildid=" ./main
+          upx -q -9 build_assets/v2ray
+          go build -v -o build_assets/v2ctl -trimpath -ldflags "-s -w -buildid=" -tags confonly ./infra/control/main
+          upx -q -9 build_assets/v2ctl
+      - name: Build Windows wv2ray
+        if: matrix.goos == 'windows'
+        run: |
+          go build -v -o build_assets/wv2ray.exe -trimpath -ldflags "-s -w -H windowsgui -buildid=" ./main
+          cd ./build_assets || exit 1
+          mv v2ray v2ray.exe
+          mv v2ctl v2ctl.exe
+      - name: Prepare package
+        run: cp -v ./release/config/*.* ./build_assets
+
+      - name: Prepare package for Linux
+        if: matrix.goos == 'linux'
+        run: cp -rv ./release/config/systemd ./build_assets/
+
+      - name: Create and Upload ZIP archive to Download Station
+        run: |
+          pushd build_assets || exit 1
+          zip -9vr ../v2ray-$ASSET_NAME.zip .
+          popd || exit 1
+          curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Software/ALL_Plantform/V2Ray" -F "file=@v2ray-$ASSET_NAME.zip" -F "unzip=false" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+      - name: Upload ZIP file to Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: v2ray-${{ steps.get_filename.outputs.ASSET_NAME }}.zip
+          path: v2ray-${{ steps.get_filename.outputs.ASSET_NAME }}.zip
