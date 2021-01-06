@@ -26,21 +26,18 @@ jobs:
         
     - name: Download and Load custom configuration
       run: |
-        cd lede
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/x86_64/.config >.config
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
         make defconfig
         
     - name: Download package
       run: |
-        cd lede
         make download -j8
         find dl -size -1024c -exec rm -f {} \;
         sudo df -h
         
     - name: When Multi-core compile failure will be rollback to Single core compile
       run: |
-        cd lede
         echo -e "Will be use $(nproc) thread compile"
         sudo df -h
         make -j$(nproc) || make -j2 || make -j1 V=s
@@ -56,7 +53,7 @@ jobs:
     - name: Only Upload Packages to Download Station
       if: success()
       run: |
-        cd lede/bin
+        cd bin
         zip -r -o -q -9 x86_64-Package.zip . -i *.ipk
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean-Package" -F "file=@x86_64-Package.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         #curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean-Package" -F "file=@x86_64-Package.zip" ${{ secrets.CN_STATION_PROCESSOR }} 
@@ -66,12 +63,12 @@ jobs:
       if: always()
       with:
         name: x86_64
-        path: lede/bin/targets/*/*
+        path: bin/targets/*/*
 
     - name: Upload firmware to Download Station (Without packages)
       if: success()
       run: |
-        cd lede/bin/targets/*/*
+        cd bin/targets/*/*
         zip -r -o -q -9 x86_64.zip . -i *.gz
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean" -F "file=@x86_64.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         #curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/x86_64/Lean" -F "file=@x86_64.zip" ${{ secrets.CN_STATION_PROCESSOR }}
@@ -92,20 +89,17 @@ jobs:
         
     - name: Download and Load custom configuration
       run: |
-        cd lede
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/rpi/.config >.config
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
         make defconfig
         
     - name: Download package
       run: |
-        cd lede
         make download -j8
         find dl -size -1024c -exec rm -f {} \;
         
     - name: When Multi-core compile failure will be rollback to Single core compile
       run: |
-        cd lede
         echo -e "$(nproc) thread compile"
         sudo df -h
         make -j$(nproc) || make -j2 || make -j1 V=s
@@ -123,7 +117,7 @@ jobs:
     - name: Only Upload Packages to Download Station
       if: success()
       run: |
-        cd lede/bin
+        cd bin
         zip -r -o -q -9 rpi-package.zip . -i *.ipk
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi/Lean-Package" -F "file=@rpi-package.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         #curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi/Lean-package" -F "file=@rpi3-package.zip" ${{ secrets.CN_STATION_PROCESSOR }} 
@@ -138,7 +132,7 @@ jobs:
     - name: Upload firmware to Download Station (Without packages)
       if: success()
       run: |
-        cd lede/bin/targets/*/*
+        cd bin/targets/*/*
         zip -r -o -q -9 rpi.zip . -i *.gz
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi/Lean" -F "file=@rpi.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         #curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/RaspberryPi/Lean" -F "file=@rpi.zip" ${{ secrets.CN_STATION_PROCESSOR }}
@@ -159,20 +153,17 @@ jobs:
         
     - name: Download and Load custom configuration
       run: |
-        cd lede
         curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/mt7621/.config >.config
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/diy.sh)
         make defconfig
         
     - name: Download package
       run: |
-        cd lede
         make download -j8
         find dl -size -1024c -exec rm -f {} \;
         
     - name: When Multi-core compile failure will be rollback to Single core compile
       run: |
-        cd lede
         echo -e "$(nproc) thread compile"
         sudo df -h
         make -j$(nproc) || make -j2 || make -j1 V=s
@@ -181,7 +172,7 @@ jobs:
     - name: Only Upload Packages to Download Station
       if: success()
       run: |
-        cd lede/bin
+        cd bin
         zip -r -o -q -9  mt7621-Package.zip . -i *.ipk
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/XiaoMi/XiaoMi-AC2100/Lean-Package" -F "file=@mt7621-Package.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         #curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/XiaoMi/XiaoMi-AC2100/Lean-Package" -F "file=@mt7621-Package.zip" ${{ secrets.CN_STATION_PROCESSOR }}
@@ -196,7 +187,7 @@ jobs:
     - name: Upload firmware to Download Station (Without packages)
       if: success()
       run: |
-        cd lede/bin/targets/*/*
+        cd bin/targets/*/*
         zip -r -o -q -9 mt7621.zip . -i *.bin
         curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/XiaoMi/XiaoMi-AC2100/Lean" -F "file=@mt7621.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
         #curl --socks5 ${{ secrets.PROXY_ADDR }} -U ${{ secrets.PROXY_USER }} -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/LEDE/XiaoMi/XiaoMi-AC2100/Lean" -F "file=@mt7621.zip" ${{ secrets.CN_STATION_PROCESSOR }}
