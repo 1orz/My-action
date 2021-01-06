@@ -20,9 +20,9 @@ jobs:
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/prenv.sh)
         
     - name: Checkout repo
-        uses: actions/checkout@v2
-        with:
-          repository: coolsnowwolf/lede
+      uses: actions/checkout@v2
+      with:
+        repository: coolsnowwolf/lede
         
     - name: Download and Load custom configuration
       run: |
@@ -86,9 +86,9 @@ jobs:
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/prenv.sh)
         
     - name: Checkout repo
-        uses: actions/checkout@v2
-        with:
-          repository: coolsnowwolf/lede
+      uses: actions/checkout@v2
+      with:
+        repository: coolsnowwolf/lede
         
     - name: Download and Load custom configuration
       run: |
@@ -153,9 +153,9 @@ jobs:
         bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/master/lean-lede/prenv.sh)
         
     - name: Checkout repo
-        uses: actions/checkout@v2
-        with:
-          repository: coolsnowwolf/lede
+      uses: actions/checkout@v2
+      with:
+        repository: coolsnowwolf/lede
         
     - name: Download and Load custom configuration
       run: |
