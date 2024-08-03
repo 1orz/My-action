@@ -22,12 +22,9 @@ jobs:
           fetch-depth: 0
           ref: master
       - name: Cache
-        uses: klever1988/cachewrtbuild@main
+        uses: stupidloud/cachewrtbuild@main
         with:
-          ccache: true
-          toolchain: true
-          skip: true
-          clean: false
+          ccache: 'true'
       - name: Download and Load custom configuration
         run: |
           curl -fsSL https://raw.githubusercontent.com/1orz/My-action/main/lede/config-x86-64 >.config
