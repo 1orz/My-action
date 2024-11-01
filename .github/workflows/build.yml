@@ -1,0 +1,156 @@
+name: Build
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: 0 0/6 * * *
+jobs:
+  lede:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare Environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/refs/heads/main/prenv.sh)
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          repository: coolsnowwolf/lede
+          fetch-depth: 0
+          ref: master
+      - name: Cache
+        uses: stupidloud/cachewrtbuild@main
+        with:
+          ccache: "true"
+      - name: Download and Load custom configuration
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/1orz/My-action/main/lede/config >.config
+          echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config; make defconfig
+          ./scripts/feeds update -a && ./scripts/feeds install -a
+      - name: Try to Build When Multi-core compile failure will be rollback to Single core compile
+        run: |
+          echo -e "Will be use $(nproc) thread compile"
+          sudo df -h
+          make -j$(nproc) || make -j1 V=99
+          sudo df -h
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        if: success()
+        with:
+          name: lede
+          path: bin/targets/*/*
+      - name: Upload firmware to Download Station
+        if: success()
+        run: |
+          cd bin/targets/*/*
+          zip -r -o -q -9 file.zip . -i *.gz
+          curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/lede/x86_64" -F "file=@file.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+      - name: Delete workflow runs
+        uses: GitRML/delete-workflow-runs@main
+        continue-on-error: true
+        with:
+          retain_days: 7
+          keep_minimum_runs: 1
+
+  openwrt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare Environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/refs/heads/main/prenv.sh)
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          repository: openwrt/openwrt
+          fetch-depth: 0
+          ref: main
+      - name: Cache
+        uses: stupidloud/cachewrtbuild@main
+        with:
+          ccache: "true"
+      - name: Download and Load custom configuration
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/1orz/My-action/main/openwrt/config >.config
+          echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config; make defconfig
+          rm -rf package/helloworld
+          git clone --depth=1 https://github.com/fw876/helloworld.git package/helloworld
+          ./scripts/feeds update -a && ./scripts/feeds install -a
+      - name: Try to Build When Multi-core compile failure will be rollback to Single core compile
+        run: |
+          echo -e "Will be use $(nproc) thread compile"
+          sudo df -h
+          make -j$(nproc) || make -j1 V=99
+          sudo df -h
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        if: success()
+        with:
+          name: openwrt
+          path: bin/targets/*/*
+      - name: Upload firmware to Download Station
+        if: success()
+        run: |
+          cd bin/targets/*/*
+          zip -r -o -q -9 file.zip . -i *.gz
+          curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/openwrt/x86_64" -F "file=@file.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+      - name: Delete workflow runs
+        uses: GitRML/delete-workflow-runs@main
+        continue-on-error: true
+        with:
+          retain_days: 7
+          keep_minimum_runs: 1
+
+  immortalwrt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare Environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/1orz/My-action/refs/heads/main/prenv.sh)
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          repository: immortalwrt/immortalwrt
+          fetch-depth: 0
+          ref: master
+      - name: Cache
+        uses: stupidloud/cachewrtbuild@main
+        with:
+          ccache: "true"
+      - name: Download and Load custom configuration
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/1orz/My-action/main/immortalwrt/config >.config
+          echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config; make defconfig
+          rm -rf package/helloworld
+          git clone --depth=1 https://github.com/fw876/helloworld.git package/helloworld
+          ./scripts/feeds update -a && ./scripts/feeds install -a
+      - name: Try to Build When Multi-core compile failure will be rollback to Single core compile
+        run: |
+          echo -e "Will be use $(nproc) thread compile"
+          sudo df -h
+          make -j$(nproc) || make -j1 V=99
+          sudo df -h
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        if: success()
+        with:
+          name: immortalwrt
+          path: bin/targets/*/*
+      - name: Upload firmware to Download Station
+        if: success()
+        run: |
+          cd bin/targets/*/*
+          zip -r -o -q -9 file.zip . -i *.gz
+          curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/immortalwrt/x86_64" -F "file=@file.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+      - name: Delete workflow runs
+        uses: GitRML/delete-workflow-runs@main
+        continue-on-error: true
+        with:
+          retain_days: 7
+          keep_minimum_runs: 1
