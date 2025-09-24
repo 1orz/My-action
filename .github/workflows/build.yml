@@ -1,7 +1,7 @@
 name: Build
 on:
   schedule:
-    - cron: 0 0/6 * * *
+    - cron: 0 4 * * *
 
   workflow_dispatch:
     inputs:
@@ -52,89 +52,8 @@ on:
         default: true
 
 jobs:
-  lede-x86_64:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_lede_x86_64 }}
-    runs-on: ${{ github.event.inputs.runner_image || 'ubuntu-latest' }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@main
-        with:
-          fetch-depth: 0
-
-      - name: Prepare Environment and Save Build Configs
-        env:
-          DEBIAN_FRONTEND: noninteractive
-        run: |
-          bash prenv.sh
-          cp lede/x86_64 /tmp/.config
-
-      - name: Checkout repo
-        uses: actions/checkout@main
-        with:
-          repository: coolsnowwolf/lede
-          fetch-depth: 0
-          ref: master
-
-      - name: Cache
-        uses: stupidloud/cachewrtbuild@main
-        with:
-          ccache: true
-          mixkey: "lede_x86_64"
-          skip: ${{ ! github.event.inputs.clean_build || true }}
-          clean: ${{ github.event.inputs.clean_build || false }}
-
-      - name: Download and Load custom configuration
-        run: |
-          echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config
-          ./scripts/feeds update -a && ./scripts/feeds install -a
-          cp /tmp/.config .config
-          make defconfig clean
-
-      - name: Try to Build When Multi-core compile failure will be rollback to Single core compile
-        run: |
-          echo "Will be use $(nproc) thread compile"
-          sudo df -h
-          make -j$(nproc) || make -j1 V=99
-          sudo df -h
-
-      - name: Prepare Image Artifact
-        if: success()
-        run: |
-          mkdir -p images
-          cp -r bin/targets/*/*/*.gz images/
-          cp -r bin/targets/*/*/sha256sums images/
-
-      - name: Upload Artifact Images
-        if: success()
-        uses: actions/upload-artifact@main
-        with:
-          compression-level: 9
-          include-hidden-files: true
-          name: lede-x86_64-images
-          path: images
-
-      - name: Prepare Packages Artifact
-        if: success()
-        run: |
-          mkdir -p pkgs
-          cp -r bin/targets/*/*/packages/* pkgs/
-
-      - name: Upload Artifact Packages
-        if: success()
-        uses: actions/upload-artifact@main
-        with:
-          name: lede-x86_64-packages
-          path: pkgs
-
-      - name: Upload firmware to Download Station
-        if: ${{ github.event.inputs.upload_to_server || false }} && success()
-        run: |
-          cd bin/targets/*/*
-          zip -r -o -q -9 file.zip . -i *.gz
-          [[ -f file.zip ]] && curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/lede/x86_64" -F "file=@file.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
-
   openwrt-x86_64:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_openwrt_x86_64 }}
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_openwrt_armsr_armv8 }}
     runs-on: ${{ github.event.inputs.runner_image || 'ubuntu-latest' }}
     steps:
       - name: Checkout repo
@@ -167,8 +86,9 @@ jobs:
       - name: Download and Load custom configuration
         run: |
           echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config
-          rm -rf package/helloworld
-          git clone --depth=1 https://github.com/fw876/helloworld.git package/helloworld
+          rm -rf package/openwrt-passwall2 package/openwrt-passwall-packages
+          git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2.git package/openwrt-passwall2
+          git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages.git package/openwrt-passwall-packages
           ./scripts/feeds update -a && ./scripts/feeds install -a
           cp /tmp/.config .config
           make defconfig clean
