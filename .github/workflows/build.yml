@@ -45,6 +45,17 @@ jobs:
     if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_openwrt_x86_64 }}
     runs-on: ${{ github.event.inputs.runner_image || 'ubuntu-latest' }}
     steps:
+      - name: Free up disk space on Ubuntu runners
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
       - name: Checkout repo
         uses: actions/checkout@main
         with:
@@ -56,17 +67,6 @@ jobs:
         run: |
           bash prenv.sh
           cp openwrt/x86_64 /tmp/.config
-
-      - name: Free up disk space on Ubuntu runners
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: false
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
 
       - name: Checkout repo
         uses: actions/checkout@main
@@ -140,6 +140,17 @@ jobs:
     if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_openwrt_armsr_armv8 }}
     runs-on: ${{ github.event.inputs.runner_image || 'ubuntu-latest' }}
     steps:
+      - name: Free up disk space on Ubuntu runners
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
       - name: Checkout repo
         uses: actions/checkout@main
         with:
@@ -151,17 +162,6 @@ jobs:
         run: |
           bash prenv.sh
           cp openwrt/config-armsr-armv8 /tmp/.config
-
-      - name: Free up disk space on Ubuntu runners
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: false
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
 
       - name: Checkout repo
         uses: actions/checkout@main
