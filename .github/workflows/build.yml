@@ -45,6 +45,11 @@ jobs:
     if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_openwrt_x86_64 }}
     runs-on: ${{ github.event.inputs.runner_image || 'ubuntu-latest' }}
     steps:
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '^1.25.1'
+      run: go version
+
       - name: Free up disk space on Ubuntu runners
         uses: jlumbroso/free-disk-space@main
         with:
@@ -89,12 +94,14 @@ jobs:
           rm -rf package/openwrt-passwall2 package/openwrt-passwall-packages
           git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2.git package/openwrt-passwall2
           git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages.git package/openwrt-passwall-packages
+          rm -rf feeds/packages/net/{microsocks,sing-box,v2ray-geodata,xray-core}
           ./scripts/feeds update -a && ./scripts/feeds install -a
           cp /tmp/.config .config
           make defconfig clean
 
       - name: Try to Build When Multi-core compile failure will be rollback to Single core compile
         run: |
+          sudo apt-get update && sudo apt-get install -y libncurses-dev
           echo "Will be use $(nproc) thread compile"
           sudo df -h
           make -j$(nproc) || make -j1 V=99
@@ -140,6 +147,11 @@ jobs:
     if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_openwrt_armsr_armv8 }}
     runs-on: ${{ github.event.inputs.runner_image || 'ubuntu-latest' }}
     steps:
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '^1.25.1'
+          run: go version
+
       - name: Free up disk space on Ubuntu runners
         uses: jlumbroso/free-disk-space@main
         with:
@@ -184,12 +196,14 @@ jobs:
           rm -rf package/openwrt-passwall2 package/openwrt-passwall-packages
           git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2.git package/openwrt-passwall2
           git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages.git package/openwrt-passwall-packages
+          rm -rf feeds/packages/net/{microsocks,sing-box,v2ray-geodata,xray-core}
           ./scripts/feeds update -a && ./scripts/feeds install -a
           cp /tmp/.config .config
           make defconfig clean
 
       - name: Try to Build When Multi-core compile failure will be rollback to Single core compile
         run: |
+          sudo apt-get update && sudo apt-get install -y libncurses-dev
           echo "Will be use $(nproc) thread compile"
           sudo df -h
           make -j$(nproc) || make -j1 V=99
