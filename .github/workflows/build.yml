@@ -104,7 +104,7 @@ jobs:
           make defconfig clean
       - name: Patch Rust CI LLVM setting
         run: |
-          grep -rl 'download-ci-llvm = true' feeds/packages/lang/rust/ | xargs sed -i 's/download-ci-llvm = true/download-ci-llvm = "if-unchanged"/g' || true
+          sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/g' feeds/packages/lang/rust/Makefile
 
       - name: Try to Build When Multi-core compile failure will be rollback to Single core compile
         run: |
@@ -209,7 +209,7 @@ jobs:
       # 修复 Rust CI LLVM 下载问题
       - name: Patch Rust CI LLVM setting
         run: |
-          grep -rl 'download-ci-llvm = true' feeds/packages/lang/rust/ | xargs sed -i 's/download-ci-llvm = true/download-ci-llvm = "if-unchanged"/g' || true
+          sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/g' feeds/packages/lang/rust/Makefile
       - name: Try to Build When Multi-core compile failure will be rollback to Single core compile
         run: |
           echo "Will be use $(nproc) thread compile"
