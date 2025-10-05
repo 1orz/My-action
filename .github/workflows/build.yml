@@ -20,11 +20,6 @@ on:
         type: boolean
         default: false
 
-      upload_to_server:
-        description: "Upload firmware to file server"
-        type: boolean
-        default: false
-
       clean_build:
         description: "Skip use cache and clean cache"
         type: boolean
@@ -142,13 +137,6 @@ jobs:
           name: openwrt_x86_64-packages
           path: pkgs
 
-      - name: Upload firmware to Download Station
-        if: ${{ github.event.inputs.upload_to_server || false }} && success()
-        run: |
-          cd bin/targets/*/*
-          zip -r -o -q -9 file.zip . -i *.gz
-          [[ -f file.zip ]] && curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/openwrt/x86_64" -F "file=@file.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
-
   openwrt-armsr-armv8:
     if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_openwrt_armsr_armv8 }}
     runs-on: ${{ github.event.inputs.runner_image || 'ubuntu-latest' }}
@@ -246,12 +234,49 @@ jobs:
           name: openwrt_armsr_armv8-packages
           path: pkgs
 
-      - name: Upload firmware to Download Station
-        if: ${{ github.event.inputs.upload_to_server || false }} && success()
+  release:
+    needs: [openwrt-x86_64, openwrt-armsr-armv8]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download x86_64 images artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: openwrt_x86_64-images
+          path: artifacts/openwrt_x86_64-images
+        continue-on-error: true
+
+      - name: Download armsr_armv8 images artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: openwrt_armsr_armv8-images
+          path: artifacts/openwrt_armsr_armv8-images
+        continue-on-error: true
+
+      - name: Prepare release zip
         run: |
-          cd bin/targets/*/*
-          zip -r -o -q -9 file.zip . -i *.gz
-          [[ -f file.zip ]] && curl -F "token=${{ secrets.UPLOAD_TOKEN }}" -F "location=Router/openwrt/armsr_armv8" -F "file=@file.zip" ${{ secrets.MAIN_UPLOAD_PROCESSOR }}
+          set -eux
+          mkdir -p release_files
+          # Collect all firmware .gz files from downloaded artifacts
+          find artifacts -type f -name '*.gz' -exec cp -n {} release_files/ \; || true
+          ts=$(date +'%Y-%m-%d-%H_%M')
+          echo "RELEASE_TS=$ts" >> "$GITHUB_ENV"
+          if [ -z "$(ls -A release_files || true)" ]; then
+            echo "No firmware files found to package; exiting." >&2
+            exit 1
+          fi
+          cd release_files
+          zip -r -o -q -9 "../${ts}.zip" .
+
+      - name: Create GitHub Release and upload asset using GitHub CLI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ env.RELEASE_TS }}" \
+            "${{ env.RELEASE_TS }}.zip" \
+            --title "${{ env.RELEASE_TS }}" \
+            --notes "OpenWrt firmware build from ${{ github.sha }}"
   cleanup-workflow-runs:
     runs-on: ubuntu-latest
     permissions:
