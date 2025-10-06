@@ -35,22 +35,41 @@ on:
         type: boolean
         default: true
 
-      free_disk_space:
-        description: "Free disk space on Ubuntu runners"
-        type: boolean
-        default: true
-
 jobs:
   openwrt-x86_64:
     if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_openwrt_x86_64 }}
     runs-on: ${{ github.event.inputs.runner_image || 'ubuntu-latest' }}
     steps:
-      - uses: actions/setup-go@v6
+
+      - name: Output Machine Info
+        run: |
+          uname -a
+          cat /etc/os-release
+          cat /etc/lsb-release
+          command -v neofetch && neofetch
+          echo "--------------------------CPU信息--------------------------"
+          echo "CPU物理数量: $(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
+          echo "CPU核心数量: $(nproc)"
+          echo -e "CPU型号信息:$(cat /proc/cpuinfo | grep -m1 name | awk -F: '{print $2}')\n"
+          echo "--------------------------内存信息--------------------------"
+          echo "已安装内存详细信息:"
+          echo -e "$(sudo lshw -short -C memory | grep GiB)\n"
+          echo "--------------------------硬盘信息--------------------------"
+          echo "硬盘数量: $(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
+
+      - name: Combine Disks
+        uses: easimon/maximize-build-space@master
+        with:
+            swap-size-mb: 1024
+            temp-reserve-mb: 100
+            root-reserve-mb: 1024
+
+      - name: Setup Go Environment
+        uses: actions/setup-go@v6
         with:
           go-version: '^1.25.1'
 
       - name: Free up disk space on Ubuntu runners
-        if: ${{ github.event.inputs.free_disk_space || true }}
         uses: jlumbroso/free-disk-space@main
         with:
           tool-cache: false
@@ -146,7 +165,6 @@ jobs:
           go-version: '^1.25.1'
 
       - name: Free up disk space on Ubuntu runners
-        if: ${{ github.event.inputs.free_disk_space || true }}
         uses: jlumbroso/free-disk-space@main
         with:
           tool-cache: false
