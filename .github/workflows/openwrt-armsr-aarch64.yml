@@ -138,8 +138,15 @@ jobs:
       - name: Prepare Packages Artifact
         if: success()
         run: |
-          mkdir -p pkgs
-          cp -r bin/targets/*/*/packages pkgs/
+          mkdir -p pkgs/packages
+          # Copy all package files from bin/targets/armsr/armv8/packages/
+          if [ -d bin/targets/armsr/armv8/packages ]; then
+            cp -r bin/targets/armsr/armv8/packages/* pkgs/packages/
+            echo "Copied packages from bin/targets/armsr/armv8/packages/"
+            ls -lh pkgs/packages/ | head -20
+          else
+            echo "Warning: bin/targets/armsr/armv8/packages not found"
+          fi
 
       - name: Upload Artifact Packages
         if: success()
@@ -152,7 +159,7 @@ jobs:
         if: success()
         run: |
           set -eux
-          ts=$(date +'%Y-%m-%d-%H_%M')
+          ts=$(date +'%Y%m%d%H%M%S')
           echo "RELEASE_TS=$ts" >> "$GITHUB_ENV"
           if [ -d pkgs/packages ]; then
             (cd pkgs && zip -r -o -q -9 "../packages_${ts}.zip" packages)
@@ -165,8 +172,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ env.RELEASE_TS }}" \
-            --title "${{ env.RELEASE_TS }}" \
+          gh release create "openwrt-armsr-aarch64-${{ env.RELEASE_TS }}" \
+            --title "openwrt-armsr-aarch64-${{ env.RELEASE_TS }}" \
             --notes "OpenWrt firmware build from ${{ github.sha }}" \
             -R "${{ github.repository }}"
 
@@ -182,7 +189,7 @@ jobs:
             echo "No firmware .gz files found to upload" >&2
             exit 1
           fi
-          gh release upload "${{ env.RELEASE_TS }}" "${files[@]}" -R "${{ github.repository }}" --clobber
+          gh release upload "openwrt-armsr-aarch64-${{ env.RELEASE_TS }}" "${files[@]}" -R "${{ github.repository }}" --clobber
 
       - name: Upload packages zip asset (if exists)
         if: success()
@@ -190,16 +197,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -f "packages_${{ env.RELEASE_TS }}.zip" ]; then
-            gh release upload "${{ env.RELEASE_TS }}" "packages_${{ env.RELEASE_TS }}.zip" -R "${{ github.repository }}" --clobber
+            gh release upload "openwrt-armsr-aarch64-${{ env.RELEASE_TS }}" "packages_${{ env.RELEASE_TS }}.zip" -R "${{ github.repository }}" --clobber
           else
             echo "No packages zip to upload; skipping"
           fi
 
-      - name: Delete old workflow runs
-        uses: Mattraks/delete-workflow-runs@v2
-        with:
-          token: ${{ github.token }}
-          repository: ${{ github.repository }}
-          retain_days: 0
-          keep_minimum_runs: 3
-          delete_workflow_pattern: openwrt-armsr-aarch64.yml
