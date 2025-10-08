@@ -175,6 +175,7 @@ jobs:
           gh release create "openwrt-x86-x64-${{ env.RELEASE_TS }}" \
             --title "openwrt-x86-x64-${{ env.RELEASE_TS }}" \
             --notes "OpenWrt firmware build from ${{ github.sha }}" \
+            --latest
             -R "${{ github.repository }}"
 
       - name: Upload firmware .gz assets
