@@ -174,7 +174,7 @@ jobs:
             echo "pkgs/packages not found; skipping packages zip"
           fi
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release (draft)
         if: success()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -182,6 +182,7 @@ jobs:
           gh release create "openwrt-x86-x64-${{ env.RELEASE_TS }}" \
             --title "openwrt-x86-x64-${{ env.RELEASE_TS }}" \
             --notes "OpenWrt firmware build from ${{ github.sha }}" \
+            --draft \
             -R "${{ github.repository }}"
 
       - name: Upload firmware .gz assets
@@ -209,9 +210,9 @@ jobs:
             echo "No packages zip to upload; skipping"
           fi
       
-      - name: Mark release as latest
+      - name: Publish release and mark as latest
         if: success()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release edit "openwrt-x86-x64-${{ env.RELEASE_TS }}" --latest -R "${{ github.repository }}"
+          gh release edit "openwrt-x86-x64-${{ env.RELEASE_TS }}" --draft=false --latest -R "${{ github.repository }}"
