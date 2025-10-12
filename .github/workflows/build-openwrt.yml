@@ -43,12 +43,12 @@ jobs:
           swap-storage: true
 
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@main
         with:
           go-version: '^1.25.1'
 
       - name: Checkout repo (builder)
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
         with:
           fetch-depth: 0
 
@@ -66,7 +66,7 @@ jobs:
           nproc
 
       - name: Checkout OpenWrt source
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
         with:
           repository: openwrt/openwrt
           fetch-depth: 0
@@ -127,7 +127,7 @@ jobs:
           fi
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@main
         with:
           name: artifacts-${{ matrix.platform }}
           path: |
@@ -142,7 +142,7 @@ jobs:
       REPO: ${{ github.repository }}
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@main
         with:
           path: all_artifacts
 
@@ -173,7 +173,7 @@ jobs:
           done
 
       - name: Checkout repo for cleanup script
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
 
       - name: Cleanup old releases
         if: always()
