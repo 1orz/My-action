@@ -1,0 +1,181 @@
+name: build-openwrt
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - platform: x86_64
+            config_file: openwrt/x86_64
+            openwrt_target: x86/64
+            feed_target: x86_64
+          - platform: armsr_armv8
+            config_file: openwrt/config-armsr-armv8
+            openwrt_target: armsr/armv8
+            feed_target: aarch64_generic
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      PLATFORM: ${{ matrix.platform }}
+    steps:
+      - name: Combine Disks
+        uses: easimon/maximize-build-space@master
+        with:
+          swap-size-mb: 1024
+          temp-reserve-mb: 100
+          root-reserve-mb: 1024
+
+      - name: Free up disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '^1.25.1'
+
+      - name: Checkout repo (builder)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare Environment and Save Build Configs
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          bash prenv.sh
+          cp ${{ matrix.config_file }} /tmp/.config
+
+      - name: Output Machine Info
+        run: |
+          uname -a
+          cat /etc/os-release
+          nproc
+
+      - name: Checkout OpenWrt source
+        uses: actions/checkout@v4
+        with:
+          repository: openwrt/openwrt
+          fetch-depth: 0
+          ref: main
+
+      - name: Cache
+        uses: stupidloud/cachewrtbuild@main
+        with:
+          ccache: true
+          toolchain: true
+          mixkey: "${{ matrix.platform }}"
+          skip: true
+          clean: false
+
+      - name: Load custom configuration
+        run: |
+          echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config
+          rm -rf package/openwrt-passwall2 package/openwrt-passwall-packages
+          git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2.git package/openwrt-passwall2
+          git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages.git package/openwrt-passwall-packages
+          rm -rf feeds/packages/net/{microsocks,sing-box,v2ray-geodata,xray-core}
+          ./scripts/feeds update -a && ./scripts/feeds install -a
+          cp /tmp/.config .config
+          make defconfig clean
+          # Patch Rust CI LLVM setting
+          sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/g' feeds/packages/lang/rust/Makefile
+
+      - name: Build
+        run: |
+          echo "Will use $(nproc) threads"
+          make -j$(nproc) || make -j1 V=99
+
+      - name: Prepare Image Artifact
+        if: success()
+        run: |
+          mkdir -p images
+          find bin/targets/${{ matrix.openwrt_target }} -name "*.gz" -exec mv {} images/ \;
+          find bin/targets/${{ matrix.openwrt_target }} -name "sha256sums" -exec mv {} images/ \;
+
+      - name: Prepare Packages Artifact
+        if: success()
+        run: |
+          mkdir -p pkgs/packages/targets pkgs/packages/repo/${{ matrix.feed_target }}
+          if [ -d bin/targets/${{ matrix.openwrt_target }}/packages ]; then
+            mv bin/targets/${{ matrix.openwrt_target }}/packages pkgs/packages
+          fi
+          if [ -d bin/packages/${{ matrix.feed_target }} ]; then
+            mv bin/packages/${{ matrix.feed_target }} pkgs/packages/repo
+          fi
+
+      - name: Archive packages zip
+        if: success()
+        run: |
+          ts=$(date +'%Y%m%d%H%M%S')
+          echo "RELEASE_TS=$ts" >> "$GITHUB_ENV"
+          if [ -d pkgs/packages ]; then
+            (cd pkgs && zip -r -q -9 "../packages-${{ matrix.platform }}_${ts}.zip" packages)
+          fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts-${{ matrix.platform }}
+          path: |
+            images/**
+            packages-${{ matrix.platform }}_*.zip
+
+  publish-release:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: all_artifacts
+
+      - name: Create or update release
+        id: release
+        run: |
+          ts=$(date +'%Y%m%d%H%M%S')
+          echo "tag=openwrt-${ts}" >> $GITHUB_OUTPUT
+          if gh release view "openwrt-${ts}" -R "$REPO" >/dev/null 2>&1; then
+            echo "mode=edit" >> $GITHUB_OUTPUT
+          else
+            echo "mode=create" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Execute release command
+        run: |
+          if [ "${{ steps.release.outputs.mode }}" == "create" ]; then
+            gh release create "${{ steps.release.outputs.tag }}" --title "${{ steps.release.outputs.tag }}" --notes "OpenWrt multi-platform build" -R "$REPO" --latest
+          else
+            gh release edit "${{ steps.release.outputs.tag }}" -R "$REPO" --latest
+          fi
+
+      - name: Upload assets
+        run: |
+          shopt -s globstar
+          for file in all_artifacts/**; do
+            [ -f "$file" ] && gh release upload "${{ steps.release.outputs.tag }}" "$file" -R "$REPO" --clobber
+          done
+
+      - name: Checkout repo for cleanup script
+        uses: actions/checkout@v4
+
+      - name: Cleanup old releases
+        if: always()
+        run: |
+          bash cleanup_github_repo.sh "$REPO" 3
