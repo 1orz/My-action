@@ -217,3 +217,7 @@ jobs:
         run: |
           gh release edit "openwrt-armsr-aarch64-${{ env.RELEASE_TS }}" --draft=false --latest -R "${{ github.repository }}"
 
+      - name: Delete outdate releases
+        if: always()
+        run: |
+          bash delete_outdate_release.sh "${{ github.repository }}" 3

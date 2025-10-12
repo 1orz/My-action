@@ -216,3 +216,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release edit "openwrt-x86-x64-${{ env.RELEASE_TS }}" --draft=false --latest -R "${{ github.repository }}"
+
+      - name: Delete outdate releases
+        if: always()
+        run: |
+          bash delete_outdate_release.sh "${{ github.repository }}" 3
