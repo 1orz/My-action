@@ -12,8 +12,8 @@ for file in "$@"; do
     continue
   fi
 
-  # 删除以 # 开头（允许前导空白）的整行注释（不改动行内注释）
-  sed -i -E '/^[[:space:]]*#/d' "$file"
+  # 只删除 # CONFIG_ 格式的注释行（允许前导空白），保留分节标题等其他注释
+  sed -i -E '/^[[:space:]]*#[[:space:]]*CONFIG_/d' "$file"
 done
 
 
