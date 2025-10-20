@@ -123,7 +123,7 @@ jobs:
         if: success()
         run: |
           mkdir -p images
-          mv bin/targets/*/*/*.gz images/
+          mv bin/targets/*/*/openwrt-* images/
           mv bin/targets/*/*/sha256sums images/
 
       - name: Upload Artifact Images
@@ -132,34 +132,21 @@ jobs:
         with:
           compression-level: 9
           include-hidden-files: true
-          name: openwrt_x86_64-images
+          name: openwrt_x86-64-images
           path: images
 
       - name: Prepare Packages Artifact
         if: success()
         run: |
-          mkdir -p pkgs/packages/targets pkgs/packages/repo/x86_64
-          # Copy all package files from bin/targets/x86/64/packages/
-          if [ -d bin/targets/x86/64/packages ]; then
-            mv bin/targets/x86/64/packages pkgs/packages
-            echo "Copied packages from bin/targets/x86/64/packages/"
-          else
-            echo "Warning: bin/targets/x86/64/packages not found"
-          fi
-          # Copy feed packages from bin/packages/x86_64/
-          if [ -d bin/packages/x86_64 ]; then
-            mv bin/packages/x86_64 pkgs/packages/repo
-            echo "Copied packages from bin/packages/x86_64/"
-          else
-            echo "Warning: bin/packages/x86_64 not found"
-          fi
+          mv bin/targets/*/*/packages pkgs/packages || echo "No packages found"
+          mv bin/packages/x86_64 pkgs/packages/feeds || echo "No packages found"
           ls -lh pkgs/packages/ | head -40
 
       - name: Upload Artifact Packages
         if: success()
         uses: actions/upload-artifact@main
         with:
-          name: openwrt_x86_64-packages
+          name: openwrt_x86-64-packages
           path: pkgs
       
       - name: Package all packages into single zip
@@ -179,25 +166,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "openwrt-x86-x64-${{ env.RELEASE_TS }}" \
-            --title "openwrt-x86-x64-${{ env.RELEASE_TS }}" \
+          gh release create "openwrt-x86-64-${{ env.RELEASE_TS }}" \
+            --title "openwrt-x86_64-${{ env.RELEASE_TS }}" \
             --notes "OpenWrt firmware build from ${{ github.sha }}" \
             --draft \
             -R "${{ github.repository }}"
 
-      - name: Upload firmware .gz assets
+      - name: Upload firmware assets
         if: success()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -eux
           shopt -s nullglob
-          files=(images/*.gz)
+          files=(images/openwrt-*)
           if [ ${#files[@]} -eq 0 ]; then
-            echo "No firmware .gz files found to upload" >&2
+            echo "No firmware files found to upload" >&2
             exit 1
           fi
-          gh release upload "openwrt-x86-x64-${{ env.RELEASE_TS }}" "${files[@]}" -R "${{ github.repository }}" --clobber
+          gh release upload "openwrt-x86-64-${{ env.RELEASE_TS }}" "${files[@]}" -R "${{ github.repository }}" --clobber
 
       - name: Upload packages zip asset (if exists)
         if: success()
@@ -205,7 +192,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -f "packages_${{ env.RELEASE_TS }}.zip" ]; then
-            gh release upload "openwrt-x86-x64-${{ env.RELEASE_TS }}" "packages_${{ env.RELEASE_TS }}.zip" -R "${{ github.repository }}" --clobber
+            gh release upload "openwrt-x86-64-${{ env.RELEASE_TS }}" "packages_${{ env.RELEASE_TS }}.zip" -R "${{ github.repository }}" --clobber
           else
             echo "No packages zip to upload; skipping"
           fi
@@ -215,4 +202,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release edit "openwrt-x86-x64-${{ env.RELEASE_TS }}" --draft=false --latest -R "${{ github.repository }}"
+          gh release edit "openwrt-x86-64-${{ env.RELEASE_TS }}" --draft=false --latest -R "${{ github.repository }}"

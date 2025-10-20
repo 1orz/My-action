@@ -123,7 +123,7 @@ jobs:
         if: success()
         run: |
           mkdir -p images
-          mv bin/targets/*/*/*.gz images/
+          mv bin/targets/*/*/openwrt-* images/
           mv bin/targets/*/*/sha256sums images/
 
       - name: Upload Artifact Images
@@ -132,34 +132,22 @@ jobs:
         with:
           compression-level: 9
           include-hidden-files: true
-          name: openwrt_mips_redmi_ac2100-images
+          name: openwrt_mipsel-redmi-ac2100-images
           path: images
 
       - name: Prepare Packages Artifact
         if: success()
         run: |
-          mkdir -p pkgs/packages/targets pkgs/packages/repo/mipsel_24kc
-          # Copy all package files from bin/targets/ramips/mt7621/packages/
-          if [ -d bin/targets/ramips/mt7621/packages ]; then
-            mv bin/targets/ramips/mt7621/packages pkgs/packages
-            echo "Copied packages from bin/targets/ramips/mt7621/packages/"
-          else
-            echo "Warning: bin/targets/ramips/mt7621/packages not found"
-          fi
-          # Copy feed packages from bin/packages/mipsel_24kc/
-          if [ -d bin/packages/mipsel_24kc ]; then
-            mv bin/packages/mipsel_24kc pkgs/packages/repo
-            echo "Copied packages from bin/packages/mipsel_24kc/"
-          else
-            echo "Warning: bin/packages/mipsel_24kc not found"
-          fi
+          mkdir -p pkgs/packages/targets pkgs/packages/feeds
+          mv bin/targets/*/*/packages pkgs/packages || echo "No packages found"
+          mv bin/packages/*/* pkgs/packages/feeds || echo "No packages found"
           ls -lh pkgs/packages/ | head -40
 
       - name: Upload Artifact Packages
         if: success()
         uses: actions/upload-artifact@main
         with:
-          name: openwrt_mips_redmi_ac2100-packages
+          name: openwrt_mipsel-redmi-ac2100-packages
           path: pkgs
       
       - name: Package all packages into single zip
@@ -192,12 +180,12 @@ jobs:
         run: |
           set -eux
           shopt -s nullglob
-          files=(images/*.gz)
+          files=(images/openwrt-*)
           if [ ${#files[@]} -eq 0 ]; then
-            echo "No firmware .gz files found to upload" >&2
+            echo "No firmware files found to upload" >&2
             exit 1
           fi
-          gh release upload "openwrt-mips-redmi-ac2100-${{ env.RELEASE_TS }}" "${files[@]}" -R "${{ github.repository }}" --clobber
+          gh release upload "openwrt-mipsel-redmi-ac2100-${{ env.RELEASE_TS }}" "${files[@]}" -R "${{ github.repository }}" --clobber
 
       - name: Upload packages zip asset (if exists)
         if: success()
@@ -205,7 +193,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -f "packages_${{ env.RELEASE_TS }}.zip" ]; then
-            gh release upload "openwrt-mips-redmi-ac2100-${{ env.RELEASE_TS }}" "packages_${{ env.RELEASE_TS }}.zip" -R "${{ github.repository }}" --clobber
+            gh release upload "openwrt-mipsel-redmi-ac2100-${{ env.RELEASE_TS }}" "packages_${{ env.RELEASE_TS }}.zip" -R "${{ github.repository }}" --clobber
           else
             echo "No packages zip to upload; skipping"
           fi
@@ -215,5 +203,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release edit "openwrt-mips-redmi-ac2100-${{ env.RELEASE_TS }}" --draft=false --latest -R "${{ github.repository }}"
+          gh release edit "openwrt-mipsel-redmi-ac2100-${{ env.RELEASE_TS }}" --draft=false --latest -R "${{ github.repository }}"
 
