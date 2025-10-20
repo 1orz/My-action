@@ -583,15 +583,6 @@ CONFIG_BUSYBOX_DEFAULT_FEATURE_SYSLOGD_READ_BUFFER_SIZE=0
 CONFIG_BUSYBOX_DEFAULT_FEATURE_IPC_SYSLOG_BUFFER_SIZE=0
 CONFIG_PACKAGE_ca-bundle=y
 CONFIG_PACKAGE_dnsmasq=y
-CONFIG_PACKAGE_dnsmasq-full=y
-CONFIG_PACKAGE_dnsmasq_full_dhcp=y
-CONFIG_PACKAGE_dnsmasq_full_dhcpv6=y
-CONFIG_PACKAGE_dnsmasq_full_dnssec=y
-CONFIG_PACKAGE_dnsmasq_full_auth=y
-CONFIG_PACKAGE_dnsmasq_full_nftset=y
-CONFIG_PACKAGE_dnsmasq_full_conntrack=y
-CONFIG_PACKAGE_dnsmasq_full_noid=y
-CONFIG_PACKAGE_dnsmasq_full_tftp=y
 CONFIG_PACKAGE_dropbear=y
 
 #
@@ -839,7 +830,6 @@ CONFIG_PACKAGE_kmod-lib-crc32c=y
 # Netfilter Extensions
 #
 CONFIG_PACKAGE_kmod-nf-conntrack=y
-CONFIG_PACKAGE_kmod-nf-conntrack-netlink=y
 CONFIG_PACKAGE_kmod-nf-conntrack6=y
 CONFIG_PACKAGE_kmod-nf-flow=y
 CONFIG_PACKAGE_kmod-nf-log=y
@@ -847,15 +837,11 @@ CONFIG_PACKAGE_kmod-nf-log6=y
 CONFIG_PACKAGE_kmod-nf-nat=y
 CONFIG_PACKAGE_kmod-nf-reject=y
 CONFIG_PACKAGE_kmod-nf-reject6=y
-CONFIG_PACKAGE_kmod-nf-socket=y
-CONFIG_PACKAGE_kmod-nf-tproxy=y
 CONFIG_PACKAGE_kmod-nfnetlink=y
 CONFIG_PACKAGE_kmod-nft-core=y
 CONFIG_PACKAGE_kmod-nft-fib=y
 CONFIG_PACKAGE_kmod-nft-nat=y
 CONFIG_PACKAGE_kmod-nft-offload=y
-CONFIG_PACKAGE_kmod-nft-socket=y
-CONFIG_PACKAGE_kmod-nft-tproxy=y
 # end of Netfilter Extensions
 
 #
@@ -870,7 +856,6 @@ CONFIG_PACKAGE_kmod-ppp=y
 CONFIG_PACKAGE_kmod-pppoe=y
 CONFIG_PACKAGE_kmod-pppox=y
 CONFIG_PACKAGE_kmod-slhc=y
-CONFIG_PACKAGE_kmod-tun=y
 CONFIG_PACKAGE_kmod-udptunnel4=y
 CONFIG_PACKAGE_kmod-udptunnel6=y
 CONFIG_PACKAGE_kmod-wireguard=y
@@ -972,7 +957,6 @@ CONFIG_GOLANG_BUILD_CACHE_DIR=""
 #
 # Lua
 #
-CONFIG_PACKAGE_lua=y
 CONFIG_LUA_ECO_MBEDTLS=y
 CONFIG_HAS_LUAJIT_ARCH=y
 # end of Lua
@@ -1213,7 +1197,6 @@ CONFIG_WOLFSSL_ALT_NAMES=y
 CONFIG_PACKAGE_bind-libs=y
 CONFIG_PACKAGE_jansson=y
 CONFIG_PACKAGE_libblobmsg-json=y
-CONFIG_PACKAGE_libbpf=y
 CONFIG_PACKAGE_libcap=y
 CONFIG_PACKAGE_libcap-ng=y
 CONFIG_PACKAGE_libcurl=y
@@ -1238,41 +1221,18 @@ CONFIG_LIBCURL_NGHTTP2=y
 #
 CONFIG_LIBCURL_PROXY=y
 CONFIG_LIBCURL_UNIX_SOCKETS=y
-CONFIG_PACKAGE_libelf=y
-CONFIG_PACKAGE_libgmp=y
-CONFIG_PACKAGE_libiperf3=m
 CONFIG_PACKAGE_libiwinfo=y
 CONFIG_PACKAGE_libjson-c=y
-CONFIG_PACKAGE_liblua=y
 CONFIG_PACKAGE_liblucihttp=y
-CONFIG_PACKAGE_liblucihttp-lua=y
 CONFIG_PACKAGE_liblucihttp-ucode=y
 CONFIG_PACKAGE_libmnl=y
 CONFIG_PACKAGE_libncurses=y
-CONFIG_PACKAGE_libnetfilter-conntrack=y
-CONFIG_PACKAGE_libnettle=y
-
-#
-# Configuration
-#
-# end of Configuration
-
-CONFIG_PACKAGE_libnfnetlink=y
 CONFIG_PACKAGE_libnftnl=y
 CONFIG_PACKAGE_libnghttp2=y
 CONFIG_PACKAGE_libnl-tiny=y
-CONFIG_PACKAGE_libpcap=y
-
-#
-# Configuration
-#
-# end of Configuration
-
 CONFIG_PACKAGE_libubox=y
 CONFIG_PACKAGE_libubus=y
-CONFIG_PACKAGE_libubus-lua=y
 CONFIG_PACKAGE_libuci=y
-CONFIG_PACKAGE_libuci-lua=y
 CONFIG_PACKAGE_libuclient=y
 CONFIG_PACKAGE_libucode=y
 CONFIG_PACKAGE_libudebug=y
@@ -1317,8 +1277,6 @@ CONFIG_LUCI_CSSTIDY=y
 CONFIG_LUCI_LANG_zh_Hans=y
 # end of Translations
 
-CONFIG_PACKAGE_luci-compat=y
-CONFIG_PACKAGE_luci-lua-runtime=y
 CONFIG_PACKAGE_luci-mod-admin-full=y
 CONFIG_PACKAGE_luci-mod-network=y
 CONFIG_PACKAGE_luci-mod-status=y
@@ -1332,15 +1290,12 @@ CONFIG_PACKAGE_luci-app-ddns=y
 CONFIG_PACKAGE_luci-app-firewall=y
 CONFIG_PACKAGE_luci-app-frpc=y
 CONFIG_PACKAGE_luci-app-package-manager=y
-CONFIG_PACKAGE_luci-app-passwall2=y
 
 #
 # Configuration
 #
-CONFIG_PACKAGE_luci-app-passwall2_Nftables_Transparent_Proxy=y
 # end of Configuration
 
-CONFIG_PACKAGE_luci-app-smartdns=y
 CONFIG_PACKAGE_luci-app-ttyd=y
 CONFIG_PACKAGE_luci-app-udpxy=y
 CONFIG_PACKAGE_luci-app-uhttpd=y
@@ -1366,10 +1321,6 @@ CONFIG_PACKAGE_luci-proto-wireguard=y
 #
 # 6. Libraries
 #
-CONFIG_PACKAGE_luci-lib-base=y
-CONFIG_PACKAGE_luci-lib-ip=y
-CONFIG_PACKAGE_luci-lib-jsonc=y
-CONFIG_PACKAGE_luci-lib-nixio=y
 CONFIG_PACKAGE_luci-lib-uqr=y
 # end of 6. Libraries
 
@@ -1378,8 +1329,6 @@ CONFIG_PACKAGE_luci-i18n-ddns-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-firewall-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-frpc-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-package-manager-zh-cn=y
-CONFIG_PACKAGE_luci-i18n-passwall2-zh-cn=y
-CONFIG_PACKAGE_luci-i18n-smartdns-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-ttyd-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-udpxy-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-uhttpd-zh-cn=y
@@ -1483,13 +1432,13 @@ CONFIG_PACKAGE_bind-nslookup=y
 CONFIG_PACKAGE_bind-rndc=y
 CONFIG_BIND_ENABLE_DOH=y
 CONFIG_PACKAGE_bind-tools=y
-CONFIG_PACKAGE_chinadns-ng=y
 CONFIG_PACKAGE_ddns-scripts=y
 CONFIG_PACKAGE_ddns-scripts-cloudflare=y
 CONFIG_PACKAGE_ddns-scripts-dnspod=y
 CONFIG_PACKAGE_ddns-scripts-dnspod-v3=y
+CONFIG_PACKAGE_ddns-scripts-godaddy=y
+CONFIG_PACKAGE_ddns-scripts-noip=y
 CONFIG_PACKAGE_ddns-scripts-services=y
-CONFIG_PACKAGE_geoview=y
 
 #
 # Configuration
@@ -1497,8 +1446,6 @@ CONFIG_PACKAGE_geoview=y
 CONFIG_PACKAGE_knot-resolver_dnstap=y
 # end of Configuration
 
-CONFIG_PACKAGE_v2ray-geoip=y
-CONFIG_PACKAGE_v2ray-geosite=y
 # end of IP Addresses and Names
 
 #
@@ -1549,7 +1496,6 @@ CONFIG_PACKAGE_v2ray-geosite=y
 #
 # Routing and Redirection
 #
-CONFIG_PACKAGE_ip-full=y
 CONFIG_PACKAGE_ip-tiny=y
 # end of Routing and Redirection
 
@@ -1586,7 +1532,6 @@ CONFIG_PACKAGE_ip-tiny=y
 #
 # VPN
 #
-CONFIG_PACKAGE_tailscale=y
 CONFIG_PACKAGE_wireguard-tools=y
 # end of VPN
 
@@ -1630,7 +1575,6 @@ CONFIG_PACKAGE_wpad-basic-mbedtls=y
 # end of arp-scan
 
 CONFIG_PACKAGE_etherwake=y
-CONFIG_PACKAGE_iperf3=m
 CONFIG_PACKAGE_iw=y
 CONFIG_PACKAGE_odhcp6c=y
 CONFIG_PACKAGE_odhcp6c_ext_cer_id=0
@@ -1644,12 +1588,8 @@ CONFIG_PACKAGE_odhcpd_ipv6only_ext_cer_id=0
 
 CONFIG_PACKAGE_ppp=y
 CONFIG_PACKAGE_ppp-mod-pppoe=y
-CONFIG_PACKAGE_smartdns=y
-CONFIG_PACKAGE_tcpdump=y
-CONFIG_PACKAGE_tcping=y
 CONFIG_PACKAGE_uclient-fetch=y
 CONFIG_PACKAGE_udpxy=y
-CONFIG_PACKAGE_xray-core=y
 # end of Network
 
 #
@@ -1680,7 +1620,6 @@ CONFIG_PACKAGE_uboot-envtools=y
 #
 # Compression
 #
-CONFIG_PACKAGE_unzip=y
 # end of Compression
 
 #
@@ -1696,7 +1635,6 @@ CONFIG_PACKAGE_unzip=y
 #
 # Editors
 #
-CONFIG_PACKAGE_nano=y
 # end of Editors
 
 #
@@ -1748,8 +1686,6 @@ CONFIG_PACKAGE_ttyd=y
 #
 # Time Zone info
 #
-CONFIG_PACKAGE_zoneinfo-asia=y
-CONFIG_PACKAGE_zoneinfo-core=y
 # end of Time Zone info
 
 #
@@ -1777,9 +1713,6 @@ CONFIG_PACKAGE_zoneinfo-core=y
 #
 # end of libselinux tools
 
-CONFIG_PACKAGE_coreutils=y
-CONFIG_PACKAGE_coreutils-base64=y
-CONFIG_PACKAGE_coreutils-nohup=y
 CONFIG_PACKAGE_iwinfo=y
 CONFIG_PACKAGE_jshn=y
 CONFIG_PACKAGE_libjson-script=y
@@ -1793,7 +1726,6 @@ CONFIG_PACKAGE_openssl-util=y
 CONFIG_STRACE_NONE=y
 CONFIG_PACKAGE_ubi-utils=y
 CONFIG_PACKAGE_ucode-mod-html=y
-CONFIG_PACKAGE_ucode-mod-lua=y
 # end of Utilities
 
 #
