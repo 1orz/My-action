@@ -138,10 +138,10 @@ jobs:
       - name: Prepare Packages Artifact
         if: success()
         run: |
-          mkdir -p pkgs/packages/targets pkgs/packages/feeds
-          mv bin/targets/*/*/packages pkgs/packages || echo "No packages found"
-          mv bin/packages/*/* pkgs/packages/feeds || echo "No packages found"
-          ls -lh pkgs/packages/ | head -40
+          mkdir -p pkgs/packages/feeds
+          mv bin/targets/*/*/packages pkgs/packages/ || echo "No target packages found"
+          mv bin/packages/aarch64_generic pkgs/packages/feeds/ || echo "No feed packages found"
+          ls -lh pkgs/packages/ | head -40 || echo "Directory listing unavailable"
 
       - name: Upload Artifact Packages
         if: success()
