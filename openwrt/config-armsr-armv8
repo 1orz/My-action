@@ -1470,6 +1470,7 @@ CONFIG_PACKAGE_luci-app-passwall2=y
 # Configuration
 #
 CONFIG_PACKAGE_luci-app-passwall2_Nftables_Transparent_Proxy=y
+CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Haproxy=y
 # end of Configuration
 
 CONFIG_PACKAGE_luci-app-qos=y
@@ -1749,19 +1750,6 @@ CONFIG_PACKAGE_wireguard-tools=y
 CONFIG_PACKAGE_cgi-io=y
 CONFIG_PACKAGE_frpc=y
 CONFIG_PACKAGE_haproxy=y
-CONFIG_PACKAGE_shadowsocks-libev-ss-local=y
-CONFIG_PACKAGE_shadowsocks-libev-ss-redir=y
-CONFIG_PACKAGE_shadowsocks-rust-sslocal=y
-CONFIG_PACKAGE_shadowsocksr-libev-ssr-local=y
-CONFIG_PACKAGE_shadowsocksr-libev-ssr-redir=y
-CONFIG_PACKAGE_sing-box=y
-CONFIG_SING_BOX_BUILD_ACME=y
-CONFIG_SING_BOX_BUILD_CLASH_API=y
-CONFIG_SING_BOX_BUILD_GVISOR=y
-CONFIG_SING_BOX_BUILD_QUIC=y
-CONFIG_SING_BOX_BUILD_TAILSCALE=y
-CONFIG_SING_BOX_BUILD_UTLS=y
-CONFIG_SING_BOX_BUILD_WIREGUARD=y
 CONFIG_PACKAGE_tinyproxy=y
 CONFIG_PACKAGE_uhttpd=y
 CONFIG_PACKAGE_uhttpd-mod-ubus=y

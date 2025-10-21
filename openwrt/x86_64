@@ -1,3 +1,7 @@
+#
+# Automatically generated file; DO NOT EDIT.
+# OpenWrt Configuration
+#
 CONFIG_MODULES=y
 CONFIG_HAVE_DOT_CONFIG=y
 CONFIG_HOST_OS_LINUX=y
@@ -73,10 +77,19 @@ CONFIG_USES_BOOT_PART=y
 CONFIG_x86_64=y
 CONFIG_ARCH="x86_64"
 
+#
+# Target Images
+#
 CONFIG_EXTERNAL_CPIO=""
 
+#
+# Root filesystem archives
+#
 CONFIG_TARGET_ROOTFS_TARGZ=y
 
+#
+# Root filesystem images
+#
 CONFIG_TARGET_ROOTFS_EXT4FS=y
 CONFIG_TARGET_EXT4_RESERVED_PCT=0
 CONFIG_TARGET_EXT4_BLOCKSIZE_4K=y
@@ -96,19 +109,32 @@ CONFIG_GRUB_TITLE="OpenWrt"
 CONFIG_TARGET_SERIAL="ttyS0"
 CONFIG_TARGET_IMAGES_GZIP=y
 
+#
+# Image Options
+#
 CONFIG_TARGET_KERNEL_PARTSIZE=128
 CONFIG_TARGET_ROOTFS_PARTSIZE=2048
 CONFIG_TARGET_ROOTFS_PARTNAME=""
+# end of Target Images
 
 
+#
+# Global build settings
+#
 CONFIG_JSON_OVERVIEW_IMAGE_INFO=y
 CONFIG_SIGNED_PACKAGES=y
 CONFIG_SIGNATURE_CHECK=y
 CONFIG_DOWNLOAD_CHECK_CERTIFICATE=y
 
+#
+# General build options
+#
 CONFIG_DISPLAY_SUPPORT=y
 CONFIG_SHADOW_PASSWORDS=y
 
+#
+# Kernel build options
+#
 CONFIG_KERNEL_BUILD_USER=""
 CONFIG_KERNEL_BUILD_DOMAIN=""
 CONFIG_KERNEL_PRINTK=y
@@ -176,6 +202,9 @@ CONFIG_KERNEL_MPTCP=y
 CONFIG_KERNEL_MPTCP_IPV6=y
 CONFIG_KERNEL_NF_CONNTRACK_TIMEOUT=y
 
+#
+# Filesystem ACL and attr support options
+#
 CONFIG_USE_FS_ACL_ATTR=y
 CONFIG_KERNEL_FS_POSIX_ACL=y
 CONFIG_KERNEL_BTRFS_FS_POSIX_ACL=y
@@ -190,6 +219,7 @@ CONFIG_KERNEL_NFS_ACL_SUPPORT=y
 CONFIG_KERNEL_REISER_FS_POSIX_ACL=y
 CONFIG_KERNEL_XFS_POSIX_ACL=y
 CONFIG_KERNEL_JFS_POSIX_ACL=y
+# end of Filesystem ACL and attr support options
 
 CONFIG_KERNEL_SQUASHFS_FRAGMENT_CACHE_SIZE=3
 CONFIG_KERNEL_CC_OPTIMIZE_FOR_PERFORMANCE=y
@@ -198,13 +228,23 @@ CONFIG_KERNEL_F2FS_FS_SECURITY=y
 CONFIG_KERNEL_UBIFS_FS_SECURITY=y
 CONFIG_KERNEL_JFFS2_FS_SECURITY=y
 CONFIG_KERNEL_WERROR=y
+# end of Kernel build options
 
+#
+# Package build options
+#
 CONFIG_MOLD=y
 CONFIG_IPV6=y
 
+#
+# Stripping options
+#
 CONFIG_USE_SSTRIP=y
 CONFIG_SSTRIP_DISCARD_TRAILING_ZEROES=y
 
+#
+# Hardening build options
+#
 CONFIG_PKG_CHECK_FORMAT_SECURITY=y
 CONFIG_PKG_ASLR_PIE_REGULAR=y
 CONFIG_PKG_CC_STACKPROTECTOR_REGULAR=y
@@ -213,6 +253,7 @@ CONFIG_KERNEL_STACKPROTECTOR=y
 CONFIG_PKG_FORTIFY_SOURCE_1=y
 CONFIG_PKG_RELRO_FULL=y
 CONFIG_USE_SECCOMP=y
+# end of Global build settings
 
 CONFIG_BINARY_FOLDER=""
 CONFIG_DOWNLOAD_TOOL_CUSTOM=""
@@ -258,6 +299,9 @@ CONFIG_FEED_luci=y
 CONFIG_FEED_routing=y
 CONFIG_FEED_telephony=y
 
+#
+# Base system
+#
 CONFIG_PACKAGE_base-files=y
 CONFIG_PACKAGE_busybox=y
 CONFIG_BUSYBOX_DEFAULT_HAVE_DOT_CONFIG=y
@@ -574,6 +618,7 @@ CONFIG_BUSYBOX_DEFAULT_LOGGER=y
 CONFIG_BUSYBOX_DEFAULT_FEATURE_SYSLOGD_READ_BUFFER_SIZE=0
 CONFIG_BUSYBOX_DEFAULT_FEATURE_IPC_SYSLOG_BUFFER_SIZE=0
 CONFIG_PACKAGE_ca-bundle=y
+CONFIG_PACKAGE_dnsmasq=y
 CONFIG_PACKAGE_dnsmasq-full=y
 CONFIG_PACKAGE_dnsmasq_full_dhcp=y
 CONFIG_PACKAGE_dnsmasq_full_dhcpv6=y
@@ -587,6 +632,9 @@ CONFIG_PACKAGE_dnsmasq_full_broken_rtc=y
 CONFIG_PACKAGE_dnsmasq_full_tftp=y
 CONFIG_PACKAGE_dropbear=y
 
+#
+# Configuration
+#
 CONFIG_DROPBEAR_CURVE25519=y
 CONFIG_DROPBEAR_ECC=y
 CONFIG_DROPBEAR_ECC_FULL=y
@@ -602,6 +650,7 @@ CONFIG_DROPBEAR_DBCLIENT_AGENTFORWARD=y
 CONFIG_DROPBEAR_SCP=y
 CONFIG_DROPBEAR_AGENTFORWARD=y
 CONFIG_DROPBEAR_MODERN_ONLY=y
+# end of Configuration
 
 CONFIG_PACKAGE_firewall4=y
 CONFIG_PACKAGE_fstools=y
@@ -621,6 +670,10 @@ CONFIG_PACKAGE_openwrt-keyring=y
 CONFIG_PACKAGE_opkg=y
 CONFIG_PACKAGE_procd=y
 
+#
+# Configuration
+#
+# end of Configuration
 
 CONFIG_PACKAGE_procd-seccomp=y
 CONFIG_PACKAGE_procd-ujail=y
@@ -636,37 +689,110 @@ CONFIG_PACKAGE_uci=y
 CONFIG_PACKAGE_urandom-seed=y
 CONFIG_PACKAGE_urngd=y
 CONFIG_PACKAGE_usign=y
+# end of Base system
 
+#
+# Administration
+#
 
+#
+# Zabbix
+#
 
+#
+# Database Software
+#
 CONFIG_ZABBIX_POSTGRESQL=y
+# end of Zabbix
 
+#
+# openwisp
+#
 
+#
+# netjson-monitoring Configuration
+#
 CONFIG_NETJSON_MONITORING_IWINFO=y
+# end of netjson-monitoring Configuration
 
+# end of openwisp
 
+CONFIG_PACKAGE_htop=y
+CONFIG_HTOP_LMSENSORS=y
+CONFIG_PACKAGE_netdata=y
 
+#
+# Configuration
+#
+# end of Configuration
 
+# end of Administration
 
+#
+# Boot Loaders
+#
 CONFIG_PACKAGE_grub2=y
 CONFIG_PACKAGE_grub2-efi=y
+# end of Boot Loaders
 
+#
+# Development
+#
 
+#
+# Libraries
+#
+# end of Libraries
 
+# end of Development
 
+#
+# Extra packages
+#
 CONFIG_PACKAGE_libiwinfo-data=y
+# end of Extra packages
 
+#
+# Firmware
+#
 
+#
+# ath10k Board-Specific Overrides
+#
+# end of ath10k Board-Specific Overrides
 
 CONFIG_PACKAGE_bnx2-firmware=y
 CONFIG_PACKAGE_i915-firmware-dmc=y
 CONFIG_PACKAGE_r8169-firmware=y
+# end of Firmware
 
+#
+# Fonts
+#
 
+#
+# DejaVu
+#
+# end of DejaVu
+# end of Fonts
 
+#
+# Kernel modules
+#
 
+#
+# Block Devices
+#
+# end of Block Devices
 
+#
+# CAN Support
+#
+# end of CAN Support
 
+#
+# Cryptographic API modules
+#
 CONFIG_PACKAGE_kmod-crypto-crc32c=y
 CONFIG_PACKAGE_kmod-crypto-hash=y
 CONFIG_PACKAGE_kmod-crypto-kpp=y
@@ -674,29 +800,77 @@ CONFIG_PACKAGE_kmod-crypto-lib-chacha20=y
 CONFIG_PACKAGE_kmod-crypto-lib-chacha20poly1305=y
 CONFIG_PACKAGE_kmod-crypto-lib-curve25519=y
 CONFIG_PACKAGE_kmod-crypto-lib-poly1305=y
+# end of Cryptographic API modules
 
+#
+# Filesystems
+#
 CONFIG_PACKAGE_kmod-fs-vfat=y
+# end of Filesystems
 
+#
+# FireWire support
+#
+# end of FireWire support
 
+#
+# GPIO support
+#
+# end of GPIO support
 
+#
+# Hardware Monitoring Support
+#
 CONFIG_PACKAGE_kmod-hwmon-core=y
+# end of Hardware Monitoring Support
 
+#
+# I2C support
+#
 CONFIG_PACKAGE_kmod-i2c-algo-bit=y
 CONFIG_PACKAGE_kmod-i2c-core=y
+# end of I2C support
 
+#
+# Industrial I/O Modules
+#
+# end of Industrial I/O Modules
 
+#
+# Input modules
+#
 CONFIG_PACKAGE_kmod-input-core=y
+# end of Input modules
 
+#
+# LED modules
+#
+# end of LED modules
 
+#
+# Libraries
+#
 CONFIG_PACKAGE_kmod-lib-crc-ccitt=y
 CONFIG_PACKAGE_kmod-lib-crc32c=y
+# end of Libraries
 
+#
+# Multiplexer Support
+#
+# end of Multiplexer Support
 
+#
+# Native Language Support
+#
 CONFIG_PACKAGE_kmod-nls-base=y
 CONFIG_PACKAGE_kmod-nls-cp437=y
 CONFIG_PACKAGE_kmod-nls-iso8859-1=y
 CONFIG_PACKAGE_kmod-nls-utf8=y
+# end of Native Language Support
 
+#
+# Netfilter Extensions
+#
 CONFIG_PACKAGE_kmod-ipt-conntrack=y
 CONFIG_PACKAGE_kmod-ipt-conntrack-extra=y
 CONFIG_PACKAGE_kmod-ipt-core=y
@@ -726,7 +900,11 @@ CONFIG_PACKAGE_kmod-nft-nat=y
 CONFIG_PACKAGE_kmod-nft-offload=y
 CONFIG_PACKAGE_kmod-nft-socket=y
 CONFIG_PACKAGE_kmod-nft-tproxy=y
+# end of Netfilter Extensions
 
+#
+# Network Devices
+#
 CONFIG_PACKAGE_kmod-amazon-ena=y
 CONFIG_PACKAGE_kmod-amd-xgbe=y
 CONFIG_PACKAGE_kmod-bnx2=y
@@ -746,7 +924,11 @@ CONFIG_PACKAGE_kmod-phylink=y
 CONFIG_PACKAGE_kmod-r8169=y
 CONFIG_PACKAGE_kmod-stmmac-core=y
 CONFIG_PACKAGE_kmod-tg3=y
+# end of Network Devices
 
+#
+# Network Support
+#
 CONFIG_PACKAGE_kmod-inet-diag=y
 CONFIG_PACKAGE_kmod-mdio=y
 CONFIG_PACKAGE_kmod-netlink-diag=y
@@ -758,16 +940,40 @@ CONFIG_PACKAGE_kmod-tun=y
 CONFIG_PACKAGE_kmod-udptunnel4=y
 CONFIG_PACKAGE_kmod-udptunnel6=y
 CONFIG_PACKAGE_kmod-wireguard=y
+# end of Network Support
 
+#
+# Other modules
+#
 CONFIG_PACKAGE_kmod-button-hotplug=y
 CONFIG_PACKAGE_kmod-dma-buf=y
 CONFIG_PACKAGE_kmod-pps=y
 CONFIG_PACKAGE_kmod-ptp=y
+# end of Other modules
 
+#
+# PCMCIA support
+#
+# end of PCMCIA support
 
+#
+# RTC Real-Time Clock Support
+#
+# end of RTC Real-Time Clock Support
 
+#
+# SPI Support
+#
+# end of SPI Support
 
+#
+# Sound Support
+#
+# end of Sound Support
 
+#
+# USB Support
+#
 CONFIG_PACKAGE_kmod-usb-core=y
 CONFIG_PACKAGE_kmod-usb-net=y
 CONFIG_PACKAGE_kmod-usb-net-cdc-ether=y
@@ -778,7 +984,11 @@ CONFIG_PACKAGE_kmod-usb-serial=y
 CONFIG_PACKAGE_kmod-usb-serial-option=y
 CONFIG_PACKAGE_kmod-usb-serial-wwan=y
 CONFIG_PACKAGE_kmod-usb-wdm=y
+# end of USB Support
 
+#
+# Video Support
+#
 CONFIG_PACKAGE_kmod-acpi-video=y
 CONFIG_PACKAGE_kmod-backlight=y
 CONFIG_PACKAGE_kmod-drm=y
@@ -796,62 +1006,192 @@ CONFIG_PACKAGE_kmod-fb-cfb-fillrect=y
 CONFIG_PACKAGE_kmod-fb-cfb-imgblt=y
 CONFIG_PACKAGE_kmod-fb-sys-fops=y
 CONFIG_PACKAGE_kmod-fb-sys-ram=y
+# end of Video Support
 
+#
+# Virtualization
+#
+# end of Virtualization
 
+#
+# Voice over IP
+#
+# end of Voice over IP
 
+#
+# W1 support
+#
+# end of W1 support
 
+#
+# WPAN 802.15.4 Support
+#
+# end of WPAN 802.15.4 Support
 
+#
+# Wireless Drivers
+#
+# end of Wireless Drivers
+# end of Kernel modules
 
+#
+# Languages
+#
 
+#
+# Erlang
+#
+# end of Erlang
 
+#
+# Go
+#
 
+#
+# Configuration
+#
 CONFIG_GOLANG_EXTERNAL_BOOTSTRAP_ROOT=""
 CONFIG_GOLANG_BUILD_CACHE_DIR=""
+# end of Configuration
 
+# end of Go
 
+#
+# Lua
+#
 CONFIG_PACKAGE_lua=y
 CONFIG_LUA_ECO_MBEDTLS=y
 CONFIG_HAS_LUAJIT_ARCH=y
+# end of Lua
+
+#
+# Node.js
+#
+# end of Node.js
+
+#
+# PHP8
+#
+# end of PHP8
+
+#
+# Perl
+#
+# end of Perl
+
+#
+# Python
+#
+
+#
+# Configuration
+#
+# end of Configuration
 
 
+#
+# Configuration
+#
+# end of Configuration
 
+# end of Python
 
+#
+# Ruby
+#
+# end of Ruby
 
+#
+# Rust
+#
 
-
-
-
-
-
+#
+# Configuration options (for developers)
+#
 CONFIG_RUST_SCCACHE_DIR=""
+# end of Configuration options (for developers)
+# end of Rust
 
+#
+# Tcl
+#
+# end of Tcl
 
+#
+# ucode
+#
 CONFIG_PACKAGE_ucode=y
 CONFIG_PACKAGE_ucode-mod-fs=y
 CONFIG_PACKAGE_ucode-mod-math=y
 CONFIG_PACKAGE_ucode-mod-ubus=y
 CONFIG_PACKAGE_ucode-mod-uci=y
+# end of ucode
 
+# end of Languages
 
+#
+# Libraries
+#
 
+#
+# Compression
+#
+# end of Compression
 
+#
+# Database
+#
+# end of Database
 
+#
+# Filesystem
+#
 CONFIG_PACKAGE_libattr=y
+# end of Filesystem
 
+#
+# Firewall
+#
 CONFIG_PACKAGE_libip4tc=y
 CONFIG_PACKAGE_libip6tc=y
 CONFIG_PACKAGE_libiptext=y
 CONFIG_PACKAGE_libiptext-nft=y
 CONFIG_PACKAGE_libiptext6=y
 CONFIG_PACKAGE_libxtables=y
+# end of Firewall
 
+#
+# IoT
+#
+# end of IoT
 
+#
+# Languages
+#
+# end of Languages
 
+#
+# LibElektra
+#
+# end of LibElektra
 
+#
+# Networking
+#
+# end of Networking
 
+#
+# SSL
+#
 CONFIG_PACKAGE_libmbedtls=y
 
+#
+# Option details in source code: include/mbedtls/mbedtls_config.h
+#
 
+#
+# Ciphers - unselect old or less-used ciphers to reduce binary size
+#
 CONFIG_MBEDTLS_AES_C=y
 CONFIG_MBEDTLS_CMAC_C=y
 CONFIG_MBEDTLS_DES_C=y
@@ -863,12 +1203,18 @@ CONFIG_MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED=y
 CONFIG_MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED=y
 CONFIG_MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED=y
 
+#
+# Curves - unselect old or less-used curves to reduce binary size
+#
 CONFIG_MBEDTLS_ECP_DP_SECP256R1_ENABLED=y
 CONFIG_MBEDTLS_ECP_DP_SECP384R1_ENABLED=y
 CONFIG_MBEDTLS_ECP_DP_SECP521R1_ENABLED=y
 CONFIG_MBEDTLS_ECP_DP_SECP256K1_ENABLED=y
 CONFIG_MBEDTLS_ECP_DP_CURVE25519_ENABLED=y
 
+#
+# Build Options - unselect features to reduce binary size
+#
 CONFIG_MBEDTLS_HKDF_C=y
 CONFIG_MBEDTLS_THREADING_C=y
 CONFIG_MBEDTLS_THREADING_PTHREAD=y
@@ -880,29 +1226,50 @@ CONFIG_MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED=y
 CONFIG_MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED=y
 CONFIG_MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED=y
 
+#
+# Build Options
+#
 CONFIG_MBEDTLS_ENTROPY_FORCE_SHA256=y
 CONFIG_PACKAGE_libopenssl=y
 
+#
+# Build Options
+#
 CONFIG_OPENSSL_OPTIMIZE_SPEED=y
 CONFIG_OPENSSL_WITH_ASM=y
 CONFIG_OPENSSL_WITH_DEPRECATED=y
 CONFIG_OPENSSL_WITH_ERROR_MESSAGES=y
 
+#
+# Protocol Support
+#
 CONFIG_OPENSSL_WITH_TLS13=y
 CONFIG_OPENSSL_WITH_SRP=y
 CONFIG_OPENSSL_WITH_CMS=y
 
+#
+# Algorithm Selection
+#
 CONFIG_OPENSSL_WITH_CHACHA_POLY1305=y
 CONFIG_OPENSSL_WITH_PSK=y
 
+#
+# Less commonly used build options
+#
 CONFIG_OPENSSL_WITH_IDEA=y
 CONFIG_OPENSSL_WITH_SEED=y
 CONFIG_OPENSSL_WITH_MDC2=y
 CONFIG_OPENSSL_WITH_WHIRLPOOL=y
 
+#
+# Engine/Hardware Support
+#
 CONFIG_OPENSSL_ENGINE=y
 CONFIG_PACKAGE_libopenssl-conf=y
 
+#
+# wolfSSL Library Configuration
+#
 CONFIG_WOLFSSL_HAS_AES_CCM=y
 CONFIG_WOLFSSL_HAS_CHACHA_POLY=y
 CONFIG_WOLFSSL_HAS_DH=y
@@ -916,10 +1283,24 @@ CONFIG_WOLFSSL_HAS_WPAS=y
 CONFIG_WOLFSSL_HAS_ECC25519=y
 CONFIG_WOLFSSL_HAS_OPENVPN=y
 CONFIG_WOLFSSL_ALT_NAMES=y
+# end of wolfSSL Library Configuration
 
+# end of SSL
 
+#
+# Sound
+#
+# end of Sound
 
+#
+# Telephony
+#
+# end of Telephony
 
+#
+# libimobiledevice
+#
+# end of libimobiledevice
 
 CONFIG_PACKAGE_bind-libs=y
 CONFIG_PACKAGE_glib2=y
@@ -932,8 +1313,14 @@ CONFIG_PACKAGE_libcap-ng=y
 CONFIG_PACKAGE_libcomerr=y
 CONFIG_PACKAGE_libcurl=y
 
+#
+# SSL support
+#
 CONFIG_LIBCURL_MBEDTLS=y
 
+#
+# Supported protocols
+#
 CONFIG_LIBCURL_FILE=y
 CONFIG_LIBCURL_FTP=y
 CONFIG_LIBCURL_HTTP=y
@@ -941,6 +1328,9 @@ CONFIG_LIBCURL_COOKIES=y
 CONFIG_LIBCURL_NO_SMB="!"
 CONFIG_LIBCURL_NGHTTP2=y
 
+#
+# Miscellaneous
+#
 CONFIG_LIBCURL_PROXY=y
 CONFIG_LIBCURL_UNIX_SOCKETS=y
 CONFIG_PACKAGE_libe2p=y
@@ -967,6 +1357,10 @@ CONFIG_PACKAGE_libnetfilter-conntrack=y
 CONFIG_PACKAGE_libnetsnmp=y
 CONFIG_PACKAGE_libnettle=y
 
+#
+# Configuration
+#
+# end of Configuration
 
 CONFIG_PACKAGE_libnfnetlink=y
 CONFIG_PACKAGE_libnftnl=y
@@ -974,6 +1368,10 @@ CONFIG_PACKAGE_libnghttp2=y
 CONFIG_PACKAGE_libnl-tiny=y
 CONFIG_PACKAGE_libpcap=y
 
+#
+# Configuration
+#
+# end of Configuration
 
 CONFIG_PACKAGE_libpci=y
 CONFIG_PACKAGE_libpcre2=y
@@ -982,7 +1380,11 @@ CONFIG_PACKAGE_libreadline=y
 CONFIG_PACKAGE_libsmartcols=y
 CONFIG_PACKAGE_libsodium=y
 
+#
+# Configuration
+#
 CONFIG_LIBSODIUM_MINIMAL=y
+# end of Configuration
 
 CONFIG_PACKAGE_libss=y
 CONFIG_PACKAGE_libubox=y
@@ -1005,17 +1407,36 @@ CONFIG_PACKAGE_rpcd-mod-rrdns=y
 CONFIG_PACKAGE_terminfo=y
 CONFIG_PACKAGE_zlib=y
 
+#
+# Configuration
+#
+# end of Configuration
 
+# end of Libraries
 
+#
+# LuCI
+#
 
+#
+# 1. Collections
+#
 CONFIG_PACKAGE_luci=y
 CONFIG_PACKAGE_luci-light=y
+# end of 1. Collections
 
+#
+# 2. Modules
+#
 CONFIG_PACKAGE_luci-base=y
 CONFIG_LUCI_JSMIN=y
 CONFIG_LUCI_CSSTIDY=y
 
+#
+# Translations
+#
 CONFIG_LUCI_LANG_zh_Hans=y
+# end of Translations
 
 CONFIG_PACKAGE_luci-compat=y
 CONFIG_PACKAGE_luci-lua-runtime=y
@@ -1023,7 +1444,11 @@ CONFIG_PACKAGE_luci-mod-admin-full=y
 CONFIG_PACKAGE_luci-mod-network=y
 CONFIG_PACKAGE_luci-mod-status=y
 CONFIG_PACKAGE_luci-mod-system=y
+# end of 2. Modules
 
+#
+# 3. Applications
+#
 CONFIG_PACKAGE_luci-app-ddns=y
 CONFIG_PACKAGE_luci-app-firewall=y
 CONFIG_PACKAGE_luci-app-frpc=y
@@ -1031,9 +1456,12 @@ CONFIG_PACKAGE_luci-app-openvpn=y
 CONFIG_PACKAGE_luci-app-package-manager=y
 CONFIG_PACKAGE_luci-app-passwall2=y
 
-CONFIG_PACKAGE_luci-app-passwall2_Iptables_Transparent_Proxy=y
+#
+# Configuration
+#
 CONFIG_PACKAGE_luci-app-passwall2_Nftables_Transparent_Proxy=y
-CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Shadowsocks_Libev_Client=y
+CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Haproxy=y
+# end of Configuration
 
 CONFIG_PACKAGE_luci-app-smartdns=y
 CONFIG_PACKAGE_luci-app-snmpd=y
@@ -1043,21 +1471,34 @@ CONFIG_PACKAGE_luci-app-udpxy=y
 CONFIG_PACKAGE_luci-app-uhttpd=y
 CONFIG_PACKAGE_luci-app-upnp=y
 CONFIG_PACKAGE_luci-app-wol=y
+# end of 3. Applications
 
+#
+# 4. Themes
+#
 CONFIG_PACKAGE_luci-theme-bootstrap=y
 CONFIG_PACKAGE_luci-theme-material=y
+# end of 4. Themes
 
+#
+# 5. Protocols
+#
 CONFIG_PACKAGE_luci-proto-ipv6=y
 CONFIG_PACKAGE_luci-proto-ncm=y
 CONFIG_PACKAGE_luci-proto-ppp=y
 CONFIG_PACKAGE_luci-proto-qmi=y
 CONFIG_PACKAGE_luci-proto-wireguard=y
+# end of 5. Protocols
 
+#
+# 6. Libraries
+#
 CONFIG_PACKAGE_luci-lib-base=y
 CONFIG_PACKAGE_luci-lib-ip=y
 CONFIG_PACKAGE_luci-lib-jsonc=y
 CONFIG_PACKAGE_luci-lib-nixio=y
 CONFIG_PACKAGE_luci-lib-uqr=y
+# end of 6. Libraries
 
 CONFIG_PACKAGE_luci-i18n-base-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-ddns-zh-cn=y
@@ -1074,20 +1515,67 @@ CONFIG_PACKAGE_luci-i18n-udpxy-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-uhttpd-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-upnp-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-wol-zh-cn=y
+# end of LuCI
 
+#
+# Mail
+#
+# end of Mail
 
+#
+# Multimedia
+#
 
+#
+# Streaming
+#
+# end of Streaming
 
+# end of Multimedia
 
+#
+# Network
+#
 
+#
+# BitTorrent
+#
+# end of BitTorrent
 
+#
+# Captive Portals
+#
+# end of Captive Portals
 
+#
+# Cloud Manager
+#
+# end of Cloud Manager
 
+#
+# Dial-in/up
+#
+# end of Dial-in/up
 
+#
+# Download Manager
+#
+# end of Download Manager
 
+#
+# File Transfer
+#
 CONFIG_PACKAGE_curl=y
+# end of File Transfer
 
+#
+# Filesystem
+#
+# end of Filesystem
 
+#
+# Firewall
+#
 CONFIG_PACKAGE_iptables-mod-conntrack-extra=y
 CONFIG_PACKAGE_iptables-mod-iprange=y
 CONFIG_PACKAGE_iptables-mod-socket=y
@@ -1095,16 +1583,36 @@ CONFIG_PACKAGE_iptables-mod-tproxy=y
 CONFIG_PACKAGE_iptables-nft=y
 CONFIG_PACKAGE_iptables-zz-legacy=y
 
+#
+# Select iptasn options
+#
+# end of Select iptasn options
 
 
+#
+# Select iptgeoip options
+#
+# end of Select iptgeoip options
 
 CONFIG_PACKAGE_miniupnpd-nftables=y
 CONFIG_PACKAGE_nftables-json=y
 CONFIG_PACKAGE_xtables-legacy=y
 CONFIG_PACKAGE_xtables-nft=y
+# end of Firewall
 
+#
+# Firewall Tunnel
+#
+# end of Firewall Tunnel
 
+#
+# FreeRADIUS (version 3)
+#
+# end of FreeRADIUS (version 3)
 
+#
+# IP Addresses and Names
+#
 CONFIG_PACKAGE_bind-check=y
 CONFIG_PACKAGE_bind-ddns-confgen=y
 CONFIG_PACKAGE_bind-dig=y
@@ -1123,59 +1631,143 @@ CONFIG_PACKAGE_ddns-scripts-godaddy=y
 CONFIG_PACKAGE_ddns-scripts-services=y
 CONFIG_PACKAGE_geoview=y
 
+#
+# Configuration
+#
 CONFIG_PACKAGE_knot-resolver_dnstap=y
+# end of Configuration
 
 CONFIG_PACKAGE_v2ray-geoip=y
 CONFIG_PACKAGE_v2ray-geosite=y
+# end of IP Addresses and Names
 
+#
+# Instant Messaging
+#
+# end of Instant Messaging
 
+#
+# Linux ATM tools
+#
+# end of Linux ATM tools
 
+#
+# LoRaWAN
+#
+# end of LoRaWAN
 
+#
+# NMAP Suite
+#
+# end of NMAP Suite
 
+#
+# NTRIP
+#
+# end of NTRIP
 
+#
+# OLSR.org network framework
+#
+# end of OLSR.org network framework
 
+#
+# Open vSwitch
+#
+# end of Open vSwitch
 
+#
+# OpenLDAP
+#
+# end of OpenLDAP
 
+#
+# Printing
+#
+# end of Printing
 
+#
+# Routing and Redirection
+#
 CONFIG_PACKAGE_ip-full=y
+# end of Routing and Redirection
 
+#
+# SSH
+#
+# end of SSH
 
+#
+# THC-IPv6 attack and analyzing toolkit
+#
+# end of THC-IPv6 attack and analyzing toolkit
 
+#
+# Tcpreplay
+#
+# end of Tcpreplay
 
+#
+# Telephony
+#
+# end of Telephony
 
+#
+# Telephony Lantiq
+#
+# end of Telephony Lantiq
 
+#
+# Time Synchronization
+#
+# end of Time Synchronization
 
+#
+# VPN
+#
 CONFIG_PACKAGE_tailscale=y
 CONFIG_PACKAGE_wireguard-tools=y
+# end of VPN
 
+#
+# Version Control Systems
+#
+# end of Version Control Systems
 
+#
+# WWAN
+#
 CONFIG_PACKAGE_comgt=y
 CONFIG_PACKAGE_comgt-ncm=y
 CONFIG_PACKAGE_uqmi=y
+# end of WWAN
 
+#
+# Web Servers/Proxies
+#
 CONFIG_PACKAGE_cgi-io=y
 CONFIG_PACKAGE_frpc=y
 CONFIG_PACKAGE_haproxy=y
-CONFIG_PACKAGE_shadowsocks-libev-ss-local=y
-CONFIG_PACKAGE_shadowsocks-libev-ss-redir=y
-CONFIG_PACKAGE_shadowsocks-rust-sslocal=y
-CONFIG_PACKAGE_shadowsocksr-libev-ssr-local=y
-CONFIG_PACKAGE_shadowsocksr-libev-ssr-redir=y
-CONFIG_PACKAGE_sing-box=y
-CONFIG_SING_BOX_BUILD_ACME=y
-CONFIG_SING_BOX_BUILD_CLASH_API=y
-CONFIG_SING_BOX_BUILD_GVISOR=y
-CONFIG_SING_BOX_BUILD_QUIC=y
-CONFIG_SING_BOX_BUILD_TAILSCALE=y
-CONFIG_SING_BOX_BUILD_UTLS=y
-CONFIG_SING_BOX_BUILD_WIREGUARD=y
 CONFIG_PACKAGE_tinyproxy=y
 CONFIG_PACKAGE_uhttpd=y
 CONFIG_PACKAGE_uhttpd-mod-ubus=y
 CONFIG_PACKAGE_v2ray-plugin=y
+# end of Web Servers/Proxies
 
+#
+# Wireless
+#
+# end of Wireless
 
+#
+# WirelessAPD
+#
+# end of WirelessAPD
 
+#
+# arp-scan
+#
+# end of arp-scan
 
 CONFIG_PACKAGE_chat=y
 CONFIG_PACKAGE_etherwake=y
@@ -1186,7 +1778,11 @@ CONFIG_PACKAGE_odhcp6c=y
 CONFIG_PACKAGE_odhcp6c_ext_cer_id=0
 CONFIG_PACKAGE_odhcpd-ipv6only=y
 
+#
+# Configuration
+#
 CONFIG_PACKAGE_odhcpd_ipv6only_ext_cer_id=0
+# end of Configuration
 
 CONFIG_PACKAGE_ppp=y
 CONFIG_PACKAGE_ppp-mod-pppoe=y
@@ -1199,40 +1795,136 @@ CONFIG_PACKAGE_uclient-fetch=y
 CONFIG_PACKAGE_udpxy=y
 CONFIG_PACKAGE_wwan=y
 CONFIG_PACKAGE_xray-core=y
+# end of Network
 
+#
+# Sound
+#
+# end of Sound
 
+#
+# Utilities
+#
 
+#
+# AppArmor
+#
+# end of AppArmor
 
+#
+# BigClown
+#
+# end of BigClown
 
+#
+# Boot Loaders
+#
 CONFIG_PACKAGE_grub2-bios-setup=y
+# end of Boot Loaders
 
+#
+# Compression
+#
 CONFIG_PACKAGE_unzip=y
+# end of Compression
 
+#
+# Database
+#
+# end of Database
 
+#
+# Disc
+#
 CONFIG_PACKAGE_partx-utils=y
+# end of Disc
 
+#
+# Editors
+#
 CONFIG_PACKAGE_nano=y
+# end of Editors
 
+#
+# Encryption
+#
+# end of Encryption
 
+#
+# Filesystem
+#
 CONFIG_PACKAGE_e2fsprogs=y
 CONFIG_PACKAGE_mkf2fs=y
+# end of Filesystem
 
+#
+# Image Manipulation
+#
+# end of Image Manipulation
 
+#
+# Microcontroller programming
+#
+# end of Microcontroller programming
 
+#
+# RTKLIB Suite for GNSS Positioning
+#
+# end of RTKLIB Suite for GNSS Positioning
 
+#
+# SSL
+#
+# end of SSL
 
+#
+# Shells
+#
+# end of Shells
 
+#
+# Telephony
+#
+# end of Telephony
 
+#
+# Terminal
+#
 CONFIG_PACKAGE_screen=y
 CONFIG_PACKAGE_ttyd=y
+# end of Terminal
 
+#
+# Time Zone info
+#
+# end of Time Zone info
 
+#
+# Userspace GPIO Drivers
+#
+# end of Userspace GPIO Drivers
 
+#
+# Utilities
+#
+# end of Utilities
 
+#
+# Virtualization
+#
 CONFIG_PACKAGE_qemu-ga=y
 CONFIG_PACKAGE_virtio-console-helper=y
+# end of Virtualization
 
+#
+# libimobiledevice
+#
+# end of libimobiledevice
 
+#
+# libselinux tools
+#
+# end of libselinux tools
 
 CONFIG_PACKAGE_coreutils=y
 CONFIG_PACKAGE_coreutils-base64=y
@@ -1241,11 +1933,22 @@ CONFIG_PACKAGE_jshn=y
 CONFIG_PACKAGE_libjson-script=y
 CONFIG_PACKAGE_openssl-util=y
 
+#
+# Configuration
+#
+# end of Configuration
 
 CONFIG_STRACE_NONE=y
 CONFIG_PACKAGE_ucode-mod-html=y
 CONFIG_PACKAGE_ucode-mod-lua=y
+# end of Utilities
 
+#
+# Xorg
+#
 
-
-CONFIG_OVERRIDE_PKGS="microsocks"
+#
+# Font-Utils
+#
+# end of Font-Utils
+# end of Xorg
