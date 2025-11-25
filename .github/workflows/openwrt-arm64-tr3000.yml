@@ -1,0 +1,207 @@
+name: openwrt-arm64-tr3000
+on:
+  schedule:
+    - cron: 0 */6 * * *
+
+  # push:
+  #   branches:
+  #     - main
+
+  workflow_dispatch:
+    inputs:
+      runner_image:
+        description: "Runner Image"
+        required: true
+        type: string
+        default: "ubuntu-latest"
+
+      debug_with_ssh:
+        description: "Debug with SSH"
+        type: boolean
+        default: false
+
+      clean_build:
+        description: "Skip use cache and clean cache"
+        type: boolean
+        default: false
+
+jobs:
+  openwrt-arm64-tr3000:
+    runs-on: ${{ github.event.inputs.runner_image || 'ubuntu-latest' }}
+    permissions:
+      contents: write
+    steps:
+
+      - name: Combine Disks
+        uses: easimon/maximize-build-space@master
+        with:
+            swap-size-mb: 1024
+            temp-reserve-mb: 100
+            root-reserve-mb: 1024
+
+      - name: Free up disk space on Ubuntu runners
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Setup Go Environment
+        uses: actions/setup-go@main
+        with:
+            go-version: '^1.25.1'
+
+      - name: Checkout repo
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+
+      - name: Prepare Environment and Save Build Configs
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          bash prenv.sh
+          cp openwrt/tr3000 /tmp/.config
+
+      - name: Output Machine Info
+        run: |
+          uname -a
+          cat /etc/os-release
+          cat /etc/lsb-release
+          command -v neofetch && neofetch
+          echo "--------------------------CPU信息--------------------------"
+          echo "CPU物理数量: $(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
+          echo "CPU核心数量: $(nproc)"
+          echo -e "CPU型号信息:$(cat /proc/cpuinfo | grep -m1 name | awk -F: '{print $2}')\n"
+          echo "--------------------------内存信息--------------------------"
+          echo "已安装内存详细信息:"
+          echo -e "$(sudo lshw -short -C memory | grep GiB)\n"
+          echo "--------------------------硬盘信息--------------------------"
+          echo "硬盘数量: $(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
+
+      - name: Checkout repo
+        uses: actions/checkout@main
+        with:
+          repository: openwrt/openwrt
+          fetch-depth: 0
+          ref: main
+
+      - name: Cache
+        uses: stupidloud/cachewrtbuild@main
+        with:
+          ccache: true
+          toolchain: true
+          mixkey: "openwrt_arm64_tr3000"
+          skip: ${{ ! github.event.inputs.clean_build || true }}
+          clean: ${{ github.event.inputs.clean_build || false }}
+
+      - name: Load custom configuration
+        run: |
+          echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config
+          rm -rf package/feeds/openwrt-passwall2 package/feeds/openwrt-passwall-packages
+          git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2.git package/feeds/openwrt-passwall2
+          git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages.git package/feeds/openwrt-passwall-packages
+          rm -rf feeds/packages/net/{microsocks,sing-box,v2ray-geodata,xray-core}
+          ./scripts/feeds update -a && ./scripts/feeds install -a
+          cp /tmp/.config .config
+          make defconfig clean
+          # Patch Rust CI LLVM setting
+          sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/g' feeds/packages/lang/rust/Makefile
+
+      - name: Try to Build When Multi-core compile failure will be rollback to Single core compile
+        run: |
+          echo "Will be use $(nproc) thread compile"
+          sudo df -h
+          make -j$(nproc) || make -j1 V=99
+          sudo df -h
+
+      - name: Prepare Image Artifact
+        if: success()
+        run: |
+          mkdir -p images
+          mv bin/targets/*/*/openwrt-* images/
+          mv bin/targets/*/*/sha256sums images/
+
+      - name: Upload Artifact Images
+        if: success()
+        uses: actions/upload-artifact@main
+        with:
+          compression-level: 9
+          include-hidden-files: true
+          name: openwrt-arm64-tr3000-images
+          path: images
+
+      - name: Prepare Packages Artifact
+        if: success()
+        run: |
+          mkdir -p pkgs/packages/feeds
+          mv bin/targets/*/*/packages pkgs/packages/ || echo "No target packages found"
+          mv bin/packages/aarch64_generic pkgs/packages/feeds/ || echo "No feed packages found"
+          ls -lh pkgs/packages/ | head -40 || echo "Directory listing unavailable"
+
+      - name: Upload Artifact Packages
+        if: success()
+        uses: actions/upload-artifact@main
+        with:
+          name: openwrt-arm64-tr3000-packages
+          path: pkgs
+      
+      - name: Package all packages into single zip
+        if: success()
+        run: |
+          set -eux
+          ts=$(date +'%Y%m%d%H%M%S')
+          echo "RELEASE_TS=$ts" >> "$GITHUB_ENV"
+          if [ -d pkgs/packages ]; then
+            (cd pkgs && zip -r -o -q -9 "../packages_${ts}.zip" packages)
+          else
+            echo "pkgs/packages not found; skipping packages zip"
+          fi
+
+      - name: Create GitHub Release (draft)
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "openwrt-arm64-tr3000-${{ env.RELEASE_TS }}" \
+            --title "openwrt-arm64-tr3000-${{ env.RELEASE_TS }}" \
+            --notes "OpenWrt firmware build from ${{ github.sha }}" \
+            --draft \
+            -R "${{ github.repository }}"
+
+      - name: Upload firmware assets
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eux
+          shopt -s nullglob
+          files=(images/openwrt-*)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No firmware files found to upload" >&2
+            exit 1
+          fi
+          gh release upload "openwrt-arm64-tr3000-${{ env.RELEASE_TS }}" "${files[@]}" -R "${{ github.repository }}" --clobber
+
+      - name: Upload packages zip asset (if exists)
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -f "packages_${{ env.RELEASE_TS }}.zip" ]; then
+            gh release upload "openwrt-arm64-tr3000-${{ env.RELEASE_TS }}" "packages_${{ env.RELEASE_TS }}.zip" -R "${{ github.repository }}" --clobber
+          else
+            echo "No packages zip to upload; skipping"
+          fi
+
+      - name: Publish release and mark as latest
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release edit "openwrt-arm64-tr3000-${{ env.RELEASE_TS }}" --draft=false --latest -R "${{ github.repository }}"
+
