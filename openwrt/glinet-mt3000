@@ -1124,13 +1124,6 @@ CONFIG_ZABBIX_POSTGRESQL=y
 #
 # openwisp
 #
-
-#
-# netjson-monitoring Configuration
-#
-CONFIG_NETJSON_MONITORING_IWINFO=y
-# end of netjson-monitoring Configuration
-
 # end of openwisp
 
 CONFIG_PACKAGE_htop=y
