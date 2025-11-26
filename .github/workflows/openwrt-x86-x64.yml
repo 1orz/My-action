@@ -3,9 +3,13 @@ on:
   schedule:
     - cron: 0 */6 * * *
 
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
+    paths:
+      - 'openwrt/x86_64'
+      - 'prenv.sh'
+      - '.github/workflows/openwrt-x86-x64.yml'
 
   workflow_dispatch:
     inputs:
@@ -103,6 +107,8 @@ jobs:
         run: |
           echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config
           rm -rf package/feeds/openwrt-passwall2 package/feeds/openwrt-passwall-packages
+          git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git package/feeds/luci/luci-app-argon-config
+          git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git package/feeds/luci/luci-theme-argon
           git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2.git package/feeds/openwrt-passwall2
           git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages.git package/feeds/openwrt-passwall-packages
           rm -rf feeds/packages/net/{microsocks,sing-box,v2ray-geodata,xray-core}

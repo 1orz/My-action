@@ -3,7 +3,10 @@
 ## Supported Platforms
 
 - x86_64
-- aarch64 (ARMv8) System Ready
+- aarch64 (ARMv8) System Ready like running on macOS UTM virtual machine
+- mipsel (MIPS) Redmi AC2100
+- aarch64 (ARMv8) Glinet MT3000
+- aarch64 (ARMv8) Cudy TR3000
 
 Visit [Actions](https://github.com/1orz/My-action) to download artifacts of the firmware or check the compile status.
 

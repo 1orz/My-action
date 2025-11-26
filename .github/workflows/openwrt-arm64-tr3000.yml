@@ -3,9 +3,13 @@ on:
   schedule:
     - cron: 0 */6 * * *
 
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
+    paths:
+      - 'openwrt/tr3000'
+      - 'prenv.sh'
+      - '.github/workflows/openwrt-arm64-tr3000.yml'
 
   workflow_dispatch:
     inputs:
@@ -126,6 +130,7 @@ jobs:
         run: |
           mkdir -p images
           mv bin/targets/*/*/openwrt-* images/
+          mv bin/targets/*/*/mt79* images/ || echo "No mt79* files found"
           mv bin/targets/*/*/sha256sums images/
 
       - name: Upload Artifact Images

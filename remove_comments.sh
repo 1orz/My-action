@@ -13,7 +13,7 @@ for file in "$@"; do
   fi
 
   # 只删除 # CONFIG_ 格式的注释行（允许前导空白），保留分节标题等其他注释
-  sed -i -E '/^[[:space:]]*#[[:space:]]*CONFIG_/d' "$file"
+  sed -i '' -E '/^[[:space:]]*#[[:space:]]*CONFIG_/d' "$file"
 done
 
 
