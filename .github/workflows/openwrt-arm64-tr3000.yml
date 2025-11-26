@@ -34,6 +34,7 @@ jobs:
     runs-on: ${{ github.event.inputs.runner_image || 'ubuntu-latest' }}
     permissions:
       contents: write
+      actions: write
     steps:
 
       - name: Combine Disks
@@ -211,4 +212,32 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release edit "openwrt-arm64-tr3000-${{ env.RELEASE_TS }}" --draft=false --latest -R "${{ github.repository }}"
+
+      - name: Cleanup old releases
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RELEASE_PREFIX="openwrt-arm64-tr3000-"
+          echo "Fetching releases with prefix: $RELEASE_PREFIX"
+          releases=$(gh release list -R "${{ github.repository }}" --limit 100 \
+            | grep "^${RELEASE_PREFIX}" | awk '{print $1}' | tail -n +3)
+          for tag in $releases; do
+            echo "Deleting release: $tag"
+            gh release delete "$tag" -R "${{ github.repository }}" --yes --cleanup-tag
+          done
+
+      - name: Cleanup old workflow runs
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          WORKFLOW_NAME="${{ github.workflow }}"
+          echo "Fetching successful runs for workflow: $WORKFLOW_NAME"
+          run_ids=$(gh run list -w "$WORKFLOW_NAME" -R "${{ github.repository }}" \
+            --status success --limit 100 --json databaseId -q '.[].databaseId' | tail -n +3)
+          for run_id in $run_ids; do
+            echo "Deleting run: $run_id"
+            gh run delete "$run_id" -R "${{ github.repository }}" || true
+          done
 
