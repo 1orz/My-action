@@ -8,15 +8,6 @@ services:
     image: openwrt-builder:latest
     container_name: openwrt-builder
     
-    # 资源限制（可根据需要调整）
-    deploy:
-      resources:
-        limits:
-          cpus: '8'
-          memory: 16G
-        reservations:
-          cpus: '4'
-          memory: 8G
     
     # 挂载卷
     volumes:

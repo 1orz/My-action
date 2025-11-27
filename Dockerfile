@@ -1,7 +1,7 @@
 # OpenWrt 固件构建 Docker 镜像
 # 支持多架构: x86_64, aarch64, mipsel
 
-FROM ubuntu:24.10
+FROM ubuntu:22.04
 
 LABEL maintainer="1orz"
 LABEL description="OpenWrt Firmware Build Environment"
