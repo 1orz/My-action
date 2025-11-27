@@ -1,0 +1,39 @@
+# Git 相关
+.git
+.gitignore
+.github
+
+# 输出目录
+output/
+bin/
+tmp/
+
+# 编译缓存
+.ccache/
+dl/
+
+# IDE 和编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+*.bak
+*.old
+
+# macOS
+.DS_Store
+
+# Linux
+*.o
+*.a
+
+# README 和文档（可选）
+# README.md
+
