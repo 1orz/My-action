@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   openwrt-builder:
     build:
@@ -8,25 +6,13 @@ services:
     image: openwrt-builder:latest
     container_name: openwrt-builder
     
-    
-    # 挂载卷
+    # 简化挂载：只挂载项目目录到容器
     volumes:
-      # 配置文件目录
-      - ./openwrt:/builder/configs:ro
-      # 输出目录
-      - ./output:/builder/output:rw
-      # OpenWrt 源码（持久化）
-      - openwrt-src:/builder/openwrt:rw
-      # ccache 缓存（加速编译）
-      - ccache-data:/builder/.ccache:rw
-      # 构建脚本
-      - ./build.sh:/builder/build.sh:ro
+      - .:/workspace:rw
     
     # 环境变量
     environment:
       - TZ=Asia/Shanghai
-      - USE_CCACHE=1
-      - CCACHE_DIR=/builder/.ccache
     
     # 使用主机网络（加速下载）
     network_mode: "host"
@@ -36,14 +22,7 @@ services:
     stdin_open: true
     
     # 工作目录
-    working_dir: /builder
+    working_dir: /workspace
     
     # 默认命令
     command: /bin/bash
-
-volumes:
-  openwrt-src:
-    name: openwrt-src
-  ccache-data:
-    name: ccache-data
-

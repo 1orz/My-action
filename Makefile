@@ -23,9 +23,8 @@ help:
 	@echo ""
 	@echo "清理:"
 	@echo "  make clean       - 清理容器和未使用的镜像"
-	@echo "  make clean-all   - 清理所有（包括卷）"
-	@echo "  make clean-src   - 清理 OpenWrt 源码卷"
-	@echo "  make clean-cache - 清理编译缓存"
+	@echo "  make clean-all   - 清理所有（容器和镜像）"
+	@echo "  make clean-build - 清理构建目录（openwrt-build 和 output）"
 
 # 构建 Docker 镜像
 build:
@@ -87,40 +86,33 @@ clean:
 	docker-compose down
 	docker image prune -f
 
-# 完全清理（包括卷）
+# 完全清理
 clean-all:
-	@echo "⚠️  警告：这将删除所有构建数据和缓存！"
+	@echo "⚠️  警告：这将删除容器和镜像！"
 	@read -p "确定要继续吗？[y/N] " -n 1 -r; \
 	echo; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		docker-compose down -v; \
-		docker volume rm openwrt-src ccache-data 2>/dev/null || true; \
+		docker-compose down; \
 		docker image prune -af; \
 		echo "清理完成！"; \
 	else \
 		echo "已取消"; \
 	fi
 
-# 清理 OpenWrt 源码卷
-clean-src:
-	@echo "清理 OpenWrt 源码卷..."
-	docker-compose down
-	docker volume rm openwrt-src 2>/dev/null || true
-	@echo "清理完成！下次启动将重新克隆源码"
-
-# 清理编译缓存
-clean-cache:
-	@echo "清理编译缓存..."
-	docker volume rm ccache-data 2>/dev/null || true
-	@echo "编译缓存已清理"
+# 清理构建目录
+clean-build:
+	@echo "清理构建目录..."
+	@rm -rf openwrt-build output
+	@echo "构建目录已清理"
 
 # 查看容器状态
 status:
 	@echo "容器状态:"
 	@docker-compose ps
 	@echo ""
-	@echo "卷使用情况:"
-	@docker volume ls | grep -E "(openwrt-src|ccache-data)" || echo "未找到卷"
+	@echo "磁盘使用情况:"
+	@du -sh openwrt-build 2>/dev/null || echo "构建目录不存在"
+	@du -sh output 2>/dev/null || echo "输出目录不存在"
 
 # 查看输出文件
 list-output:

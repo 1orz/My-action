@@ -11,7 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Shanghai
 
 # 设置工作目录
-WORKDIR /builder
+WORKDIR /workspace
 
 # 安装系统依赖和构建工具
 RUN apt-get update && \
@@ -35,9 +35,9 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# 配置 ccache 加速编译
+# 配置 ccache 加速编译（使用临时目录）
 ENV USE_CCACHE=1
-ENV CCACHE_DIR=/builder/.ccache
+ENV CCACHE_DIR=/tmp/.ccache
 RUN mkdir -p ${CCACHE_DIR} && \
     ccache -M 5G
 
@@ -45,17 +45,6 @@ RUN mkdir -p ${CCACHE_DIR} && \
 RUN useradd -m -u 1000 -s /bin/bash builder && \
     echo "builder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER builder
-
-# 克隆 OpenWrt 源码（可选，也可以在运行时挂载）
-# 默认注释掉，运行时再克隆以获取最新代码
-# RUN git clone --depth=1 https://github.com/openwrt/openwrt.git /builder/openwrt
-
-# 创建构建脚本
-COPY --chown=builder:builder build.sh /builder/build.sh
-RUN chmod +x /builder/build.sh
-
-# 暴露卷以便挂载配置和输出
-VOLUME ["/builder/openwrt", "/builder/output", "/builder/.ccache"]
 
 # 默认命令
 CMD ["/bin/bash"]

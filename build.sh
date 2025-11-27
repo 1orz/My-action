@@ -26,8 +26,8 @@ log_error() {
 # 默认参数
 CONFIG_FILE="${1:-x86_64}"
 THREADS="${2:-$(nproc)}"
-OPENWRT_DIR="/builder/openwrt"
-OUTPUT_DIR="/builder/output"
+OPENWRT_DIR="/workspace/openwrt-build"
+OUTPUT_DIR="/workspace/output"
 
 log_info "开始 OpenWrt 固件构建"
 log_info "配置文件: $CONFIG_FILE"
@@ -71,14 +71,12 @@ rm -rf feeds/packages/net/{microsocks,sing-box,v2ray-geodata,xray-core} 2>/dev/n
 ./scripts/feeds install -a
 
 # 加载配置文件
-if [ -f "/builder/configs/$CONFIG_FILE" ]; then
-    log_info "加载配置: /builder/configs/$CONFIG_FILE"
-    cp "/builder/configs/$CONFIG_FILE" .config
-elif [ -f "/builder/openwrt/$CONFIG_FILE" ]; then
-    log_info "加载配置: /builder/openwrt/$CONFIG_FILE"
-    cp "/builder/openwrt/$CONFIG_FILE" .config
+if [ -f "/workspace/openwrt/$CONFIG_FILE" ]; then
+    log_info "加载配置: /workspace/openwrt/$CONFIG_FILE"
+    cp "/workspace/openwrt/$CONFIG_FILE" .config
 else
     log_error "配置文件不存在: $CONFIG_FILE"
+    log_error "请确保配置文件在 /workspace/openwrt/ 目录下"
     exit 1
 fi
 
@@ -96,7 +94,7 @@ sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/g'
 
 # 显示磁盘空间
 log_info "当前磁盘空间:"
-df -h | grep -E '(Filesystem|/$|/builder)'
+df -h | grep -E '(Filesystem|/$|/workspace)'
 
 # 开始编译
 log_info "开始编译 (使用 $THREADS 线程)..."
@@ -110,7 +108,7 @@ fi
 
 # 显示编译后磁盘空间
 log_info "编译后磁盘空间:"
-df -h | grep -E '(Filesystem|/$|/builder)'
+df -h | grep -E '(Filesystem|/$|/workspace)'
 
 # 准备输出
 log_info "准备输出文件..."
