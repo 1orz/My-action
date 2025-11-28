@@ -134,6 +134,8 @@ jobs:
           mv bin/targets/*/*/openwrt-* images/
           mv bin/targets/*/*/mt79* images/ || echo "No mt79* files found"
           mv bin/targets/*/*/sha256sums images/
+          mv bin/targets/*/*/*.buildinfo images/ || echo "No buildinfo files found"
+          mv bin/targets/*/*/profiles.json images/ || echo "No profiles.json found"
 
       - name: Upload Artifact Images
         if: success()
@@ -189,11 +191,14 @@ jobs:
         run: |
           set -eux
           shopt -s nullglob
-          files=(images/openwrt-*)
+          # 上传所有 images 目录中的文件（包括 openwrt-*、mt79*、sha256sums、buildinfo、profiles.json）
+          files=(images/*)
           if [ ${#files[@]} -eq 0 ]; then
             echo "No firmware files found to upload" >&2
             exit 1
           fi
+          echo "Files to upload:"
+          ls -lh images/
           gh release upload "openwrt-arm64-tr3000-${{ env.RELEASE_TS }}" "${files[@]}" -R "${{ github.repository }}" --clobber
 
       - name: Upload packages zip asset (if exists)
