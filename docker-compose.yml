@@ -6,23 +6,26 @@ services:
     image: openwrt-builder:latest
     container_name: openwrt-builder
     
-    # 简化挂载：只挂载项目目录到容器
     volumes:
-      - .:/workspace:rw
+      # 配置文件（只读挂载）
+      - ./openwrt:/configs:ro
+      # 构建脚本（只读挂载）
+      - ./build.sh:/build.sh:ro
+      # 输出目录（用于提取编译成品）
+      - ./output:/output:rw
+      # OpenWrt 构建目录使用 Docker 卷（大小写敏感）
+      - openwrt-build:/openwrt
     
-    # 环境变量
     environment:
       - TZ=Asia/Shanghai
     
-    # 使用主机网络（加速下载）
     network_mode: "host"
-    
-    # 保持容器运行
     tty: true
     stdin_open: true
-    
-    # 工作目录
-    working_dir: /workspace
-    
-    # 默认命令
+    working_dir: /openwrt
     command: /bin/bash
+
+# 使用 Docker 卷解决 macOS 文件系统大小写不敏感问题
+volumes:
+  openwrt-build:
+    name: openwrt-build
