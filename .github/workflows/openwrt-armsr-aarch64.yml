@@ -93,7 +93,7 @@ jobs:
         with:
           repository: openwrt/openwrt
           fetch-depth: 0
-          ref: main
+          ref: openwrt-24.10
 
       - name: Cache
         uses: stupidloud/cachewrtbuild@main
