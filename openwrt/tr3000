@@ -16,7 +16,7 @@ CONFIG_TARGET_PROFILE="DEVICE_cudy_tr3000-256mb-v1"
 CONFIG_TARGET_ARCH_PACKAGES="aarch64_cortex-a53"
 CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe -mcpu=cortex-a53"
 CONFIG_CPU_TYPE="cortex-a53"
-CONFIG_LINUX_6_6=y
+CONFIG_LINUX_6_12=y
 CONFIG_DEFAULT_base-files=y
 CONFIG_DEFAULT_ca-bundle=y
 CONFIG_DEFAULT_dnsmasq=y
@@ -24,14 +24,12 @@ CONFIG_DEFAULT_dropbear=y
 CONFIG_DEFAULT_firewall4=y
 CONFIG_DEFAULT_fitblk=y
 CONFIG_DEFAULT_fstools=y
-CONFIG_DEFAULT_iwinfo=y
 CONFIG_DEFAULT_kmod-crypto-hw-safexcel=y
 CONFIG_DEFAULT_kmod-gpio-button-hotplug=y
 CONFIG_DEFAULT_kmod-leds-gpio=y
 CONFIG_DEFAULT_kmod-mt7915e=y
 CONFIG_DEFAULT_kmod-mt7981-firmware=y
 CONFIG_DEFAULT_kmod-nft-offload=y
-CONFIG_DEFAULT_kmod-phy-aquantia=y
 CONFIG_DEFAULT_kmod-usb3=y
 CONFIG_DEFAULT_libc=y
 CONFIG_DEFAULT_libgcc=y
@@ -58,8 +56,11 @@ CONFIG_AUDIO_SUPPORT=y
 CONFIG_GPIO_SUPPORT=y
 CONFIG_PCI_SUPPORT=y
 CONFIG_PCIE_SUPPORT=y
+CONFIG_PINCTRL_SUPPORT=y
+CONFIG_PWM_SUPPORT=y
 CONFIG_USB_SUPPORT=y
 CONFIG_RTC_SUPPORT=y
+CONFIG_USES_PM=y
 CONFIG_USES_DEVICETREE=y
 CONFIG_USES_INITRAMFS=y
 CONFIG_USES_SEPARATE_INITRAMFS=y
@@ -88,6 +89,8 @@ CONFIG_TARGET_ROOTFS_INITRAMFS_SEPARATE=y
 #
 CONFIG_TARGET_ROOTFS_SQUASHFS=y
 CONFIG_TARGET_SQUASHFS_BLOCK_SIZE=256
+CONFIG_TARGET_SQUASHFS_BLOCK_READERS=4
+CONFIG_TARGET_SQUASHFS_SMALL_READERS=4
 CONFIG_TARGET_UBIFS_FREE_SPACE_FIXUP=y
 CONFIG_TARGET_UBIFS_JOURNAL_SIZE=""
 
@@ -105,6 +108,7 @@ CONFIG_JSON_OVERVIEW_IMAGE_INFO=y
 CONFIG_SIGNED_PACKAGES=y
 CONFIG_SIGNATURE_CHECK=y
 CONFIG_DOWNLOAD_CHECK_CERTIFICATE=y
+CONFIG_USE_APK=y
 
 #
 # General build options
@@ -141,10 +145,7 @@ CONFIG_KERNEL_CGROUP_RDMA=y
 CONFIG_KERNEL_CGROUP_BPF=y
 CONFIG_KERNEL_CPUSETS=y
 CONFIG_KERNEL_CGROUP_CPUACCT=y
-CONFIG_KERNEL_RESOURCE_COUNTERS=y
-CONFIG_KERNEL_MM_OWNER=y
 CONFIG_KERNEL_MEMCG=y
-CONFIG_KERNEL_MEMCG_SWAP=y
 CONFIG_KERNEL_MEMCG_KMEM=y
 CONFIG_KERNEL_CGROUP_SCHED=y
 CONFIG_KERNEL_FAIR_GROUP_SCHED=y
@@ -158,7 +159,6 @@ CONFIG_KERNEL_IPC_NS=y
 CONFIG_KERNEL_USER_NS=y
 CONFIG_KERNEL_PID_NS=y
 CONFIG_KERNEL_NET_NS=y
-CONFIG_KERNEL_DEVPTS_MULTIPLE_INSTANCES=y
 CONFIG_KERNEL_POSIX_MQUEUE=y
 CONFIG_KERNEL_SECCOMP_FILTER=y
 CONFIG_KERNEL_SECCOMP=y
@@ -178,6 +178,7 @@ CONFIG_KERNEL_PAGE_POOL=y
 CONFIG_KERNEL_MPTCP=y
 CONFIG_KERNEL_MPTCP_IPV6=y
 CONFIG_KERNEL_NF_CONNTRACK_TIMEOUT=y
+CONFIG_KERNEL_EROFS_FS_XATTR=y
 
 #
 # Filesystem ACL and attr support options
@@ -185,6 +186,7 @@ CONFIG_KERNEL_NF_CONNTRACK_TIMEOUT=y
 CONFIG_USE_FS_ACL_ATTR=y
 CONFIG_KERNEL_FS_POSIX_ACL=y
 CONFIG_KERNEL_BTRFS_FS_POSIX_ACL=y
+CONFIG_KERNEL_EROFS_FS_POSIX_ACL=y
 CONFIG_KERNEL_EXT4_FS_POSIX_ACL=y
 CONFIG_KERNEL_F2FS_FS_POSIX_ACL=y
 CONFIG_KERNEL_JFFS2_FS_POSIX_ACL=y
@@ -200,6 +202,7 @@ CONFIG_KERNEL_JFS_POSIX_ACL=y
 
 CONFIG_KERNEL_SQUASHFS_FRAGMENT_CACHE_SIZE=3
 CONFIG_KERNEL_CC_OPTIMIZE_FOR_PERFORMANCE=y
+CONFIG_KERNEL_EROFS_FS_SECURITY=y
 CONFIG_KERNEL_EXT4_FS_SECURITY=y
 CONFIG_KERNEL_F2FS_FS_SECURITY=y
 CONFIG_KERNEL_UBIFS_FS_SECURITY=y
@@ -229,6 +232,7 @@ CONFIG_KERNEL_CC_STACKPROTECTOR_REGULAR=y
 CONFIG_KERNEL_STACKPROTECTOR=y
 CONFIG_PKG_FORTIFY_SOURCE_1=y
 CONFIG_PKG_RELRO_FULL=y
+CONFIG_PKG_DT_RELR=y
 CONFIG_USE_SECCOMP=y
 # end of Global build settings
 
@@ -253,9 +257,9 @@ CONFIG_GDB=y
 CONFIG_HAS_BPF_TOOLCHAIN=y
 CONFIG_USE_MUSL=y
 CONFIG_SSP_SUPPORT=y
-CONFIG_BINUTILS_VERSION_2_42=y
-CONFIG_BINUTILS_VERSION="2.42"
-CONFIG_GCC_VERSION="13.3.0"
+CONFIG_BINUTILS_VERSION_2_44=y
+CONFIG_BINUTILS_VERSION="2.44"
+CONFIG_GCC_VERSION="14.3.0"
 CONFIG_GCC_USE_DEFAULT_VERSION=y
 CONFIG_LIBC="musl"
 CONFIG_TARGET_SUFFIX="musl"
@@ -274,10 +278,12 @@ CONFIG_FEED_packages=y
 CONFIG_FEED_luci=y
 CONFIG_FEED_routing=y
 CONFIG_FEED_telephony=y
+CONFIG_FEED_video=y
 
 #
 # Base system
 #
+CONFIG_PACKAGE_attendedsysupgrade-common=y
 CONFIG_PACKAGE_base-files=y
 CONFIG_PACKAGE_busybox=y
 CONFIG_BUSYBOX_CUSTOM=y
@@ -316,6 +322,8 @@ CONFIG_BUSYBOX_DEFAULT_IOCTL_HEX2STR_ERROR=y
 CONFIG_BUSYBOX_DEFAULT_FEATURE_EDITING=y
 CONFIG_BUSYBOX_DEFAULT_FEATURE_EDITING_MAX_LEN=512
 CONFIG_BUSYBOX_DEFAULT_FEATURE_EDITING_HISTORY=256
+CONFIG_BUSYBOX_DEFAULT_FEATURE_EDITING_SAVEHISTORY=y
+CONFIG_BUSYBOX_DEFAULT_FEATURE_EDITING_SAVE_ON_EXIT=y
 CONFIG_BUSYBOX_DEFAULT_FEATURE_TAB_COMPLETION=y
 CONFIG_BUSYBOX_DEFAULT_FEATURE_EDITING_FANCY_PROMPT=y
 CONFIG_BUSYBOX_DEFAULT_SUBST_WCHAR=0
@@ -649,6 +657,8 @@ CONFIG_BUSYBOX_CONFIG_IOCTL_HEX2STR_ERROR=y
 CONFIG_BUSYBOX_CONFIG_FEATURE_EDITING=y
 CONFIG_BUSYBOX_CONFIG_FEATURE_EDITING_MAX_LEN=512
 CONFIG_BUSYBOX_CONFIG_FEATURE_EDITING_HISTORY=256
+CONFIG_BUSYBOX_CONFIG_FEATURE_EDITING_SAVEHISTORY=y
+CONFIG_BUSYBOX_CONFIG_FEATURE_EDITING_SAVE_ON_EXIT=y
 CONFIG_BUSYBOX_CONFIG_FEATURE_TAB_COMPLETION=y
 CONFIG_BUSYBOX_CONFIG_FEATURE_EDITING_FANCY_PROMPT=y
 CONFIG_BUSYBOX_CONFIG_TRY_LOOP_CONFIGURE=y
@@ -882,18 +892,8 @@ CONFIG_BUSYBOX_CONFIG_FEATURE_PASSWD_WEAK_CHECK=y
 #
 # Linux System Utilities
 #
-CONFIG_BUSYBOX_CONFIG_BLKID=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_BLKID_TYPE=y
 CONFIG_BUSYBOX_CONFIG_DMESG=y
 CONFIG_BUSYBOX_CONFIG_FEATURE_DMESG_PRETTY=y
-CONFIG_BUSYBOX_CONFIG_FDISK=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_FDISK_WRITABLE=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_AIX_LABEL=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_SGI_LABEL=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_SUN_LABEL=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_OSF_LABEL=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_GPT_LABEL=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_FDISK_ADVANCED=y
 CONFIG_BUSYBOX_CONFIG_FLOCK=y
 CONFIG_BUSYBOX_CONFIG_HEXDUMP=y
 CONFIG_BUSYBOX_CONFIG_HWCLOCK=y
@@ -922,12 +922,6 @@ CONFIG_BUSYBOX_CONFIG_FEATURE_UMOUNT_ALL=y
 # Common options for mount/umount
 #
 CONFIG_BUSYBOX_CONFIG_FEATURE_MOUNT_LOOP=y
-CONFIG_BUSYBOX_CONFIG_VOLUMEID=y
-
-#
-# Filesystem/Volume identification
-#
-# end of Filesystem/Volume identification
 # end of Linux System Utilities
 
 #
@@ -975,10 +969,6 @@ CONFIG_BUSYBOX_CONFIG_PING=y
 CONFIG_BUSYBOX_CONFIG_PING6=y
 CONFIG_BUSYBOX_CONFIG_FEATURE_FANCY_PING=y
 CONFIG_BUSYBOX_CONFIG_ROUTE=y
-CONFIG_BUSYBOX_CONFIG_TELNET=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_TELNET_TTYPE=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_TELNET_AUTOLOGIN=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_TELNET_WIDTH=y
 CONFIG_BUSYBOX_CONFIG_TRACEROUTE=y
 CONFIG_BUSYBOX_CONFIG_TRACEROUTE6=y
 CONFIG_BUSYBOX_CONFIG_FEATURE_TRACEROUTE_VERBOSE=y
@@ -1012,14 +1002,11 @@ CONFIG_BUSYBOX_CONFIG_FREE=y
 CONFIG_BUSYBOX_CONFIG_IOSTAT=y
 CONFIG_BUSYBOX_CONFIG_KILL=y
 CONFIG_BUSYBOX_CONFIG_KILLALL=y
-CONFIG_BUSYBOX_CONFIG_KILLALL5=y
 CONFIG_BUSYBOX_CONFIG_LSOF=y
 CONFIG_BUSYBOX_CONFIG_PGREP=y
-CONFIG_BUSYBOX_CONFIG_PKILL=y
 CONFIG_BUSYBOX_CONFIG_PIDOF=y
 CONFIG_BUSYBOX_CONFIG_PS=y
 CONFIG_BUSYBOX_CONFIG_FEATURE_PS_WIDE=y
-CONFIG_BUSYBOX_CONFIG_FEATURE_PS_LONG=y
 CONFIG_BUSYBOX_CONFIG_BB_SYSCTL=y
 CONFIG_BUSYBOX_CONFIG_TOP=y
 CONFIG_BUSYBOX_CONFIG_FEATURE_TOP_CPU_USAGE_PERCENTAGE=y
@@ -1080,24 +1067,97 @@ CONFIG_PACKAGE_dnsmasq_full_tftp=y
 CONFIG_PACKAGE_dropbear=y
 
 #
-# Configuration
+# Generic options
 #
-CONFIG_DROPBEAR_CURVE25519=y
-CONFIG_DROPBEAR_ECC=y
-CONFIG_DROPBEAR_ECC_FULL=y
-CONFIG_DROPBEAR_ED25519=y
-CONFIG_DROPBEAR_CHACHA20POLY1305=y
-CONFIG_DROPBEAR_U2F=y
-CONFIG_DROPBEAR_ECDSA_SK=y
-CONFIG_DROPBEAR_ED25519_SK=y
-CONFIG_DROPBEAR_ZLIB=y
-CONFIG_DROPBEAR_DBCLIENT=y
-CONFIG_DROPBEAR_ASKPASS=y
-CONFIG_DROPBEAR_DBCLIENT_AGENTFORWARD=y
+CONFIG_DROPBEAR_LEGACY_COMPAT=y
+CONFIG_DROPBEAR_SMALL_CODE=y
+CONFIG_DROPBEAR_DEBUG_TRACE=0
+
+#
+# Login options
+#
+CONFIG_DROPBEAR_SVR_PUBKEY_OPTIONS=y
+
+#
+# * note: lastlog/login()/utmp/wtmp are unavailable with musl libc
+#
+
+#
+# Features
+#
+CONFIG_DROPBEAR_REEXEC=y
+CONFIG_DROPBEAR_DELAY_HOSTKEY=y
+CONFIG_DROPBEAR_SVR_AGENTFWD=y
+CONFIG_DROPBEAR_SVR_REMOTETCPFWD=y
+CONFIG_DROPBEAR_SVR_LOCALTCPFWD=y
+CONFIG_DROPBEAR_SVR_LOCALSTREAMFWD=y
 CONFIG_DROPBEAR_SCP=y
-CONFIG_DROPBEAR_AGENTFORWARD=y
-CONFIG_DROPBEAR_MODERN_ONLY=y
-# end of Configuration
+CONFIG_DROPBEAR_SFTPSERVER=y
+CONFIG_DROPBEAR_DBCLIENT=y
+CONFIG_DROPBEAR_USER_ALGO_LIST=y
+CONFIG_DROPBEAR_USE_PASSWORD_ENV=y
+CONFIG_DROPBEAR_CLI_AGENTFWD=y
+CONFIG_DROPBEAR_CLI_LOCALTCPFWD=y
+CONFIG_DROPBEAR_CLI_REMOTETCPFWD=y
+CONFIG_DROPBEAR_CLI_PROXYCMD=y
+
+#
+# Multi-hop support is unavailable: enable both DROPBEAR_CLI_NETCAT and DROPBEAR_CLI_PROXYCMD
+#
+
+#
+# Resource limits
+#
+CONFIG_DROPBEAR_KEX_REKEY_TIMEOUT=28800
+CONFIG_DROPBEAR_KEX_REKEY_DATA=1073741824
+CONFIG_DROPBEAR_AUTH_TIMEOUT=300
+CONFIG_DROPBEAR_MAX_AUTH_TRIES=10
+CONFIG_DROPBEAR_UNAUTH_CLOSE_DELAY=0
+CONFIG_DROPBEAR_MAX_UNAUTH_PER_IP=5
+CONFIG_DROPBEAR_MAX_UNAUTH_CLIENTS=30
+CONFIG_DROPBEAR_DEFAULT_RECV_WINDOW=262144
+CONFIG_DROPBEAR_DEFAULT_KEEPALIVE=0
+CONFIG_DROPBEAR_DEFAULT_KEEPALIVE_LIMIT=3
+CONFIG_DROPBEAR_DEFAULT_IDLE_TIMEOUT=0
+# end of Resource limits
+
+#
+# Encryption options
+#
+
+#
+# Symmetric-key ciphers:
+#
+CONFIG_DROPBEAR_AES128=y
+CONFIG_DROPBEAR_AES256=y
+CONFIG_DROPBEAR_CHACHA20POLY1305=y
+
+#
+# Cipher modes:
+#
+CONFIG_DROPBEAR_ENABLE_CTR_MODE=y
+
+#
+# Message authentication codes (MAC):
+#
+CONFIG_DROPBEAR_SHA2_256_HMAC=y
+
+#
+# Asymmetric-key ciphers:
+#
+CONFIG_DROPBEAR_RSA=y
+CONFIG_DROPBEAR_DEFAULT_RSA_SIZE=2048
+CONFIG_DROPBEAR_ED25519=y
+
+#
+# Key exchange algorithms
+#
+CONFIG_DROPBEAR_DH_GROUP14_SHA256=y
+CONFIG_DROPBEAR_CURVE25519=y
+CONFIG_DROPBEAR_SNTRUP761=y
+CONFIG_DROPBEAR_SK_KEYS=y
+CONFIG_DROPBEAR_SK_ED25519=y
+# end of Encryption options
 
 CONFIG_PACKAGE_firewall4=y
 CONFIG_PACKAGE_fitblk=y
@@ -1116,7 +1176,6 @@ CONFIG_PACKAGE_logd=y
 CONFIG_PACKAGE_mtd=y
 CONFIG_PACKAGE_netifd=y
 CONFIG_PACKAGE_openwrt-keyring=y
-CONFIG_PACKAGE_opkg=y
 CONFIG_PACKAGE_procd=y
 
 #
@@ -1126,11 +1185,11 @@ CONFIG_PACKAGE_procd=y
 
 CONFIG_PACKAGE_procd-seccomp=y
 CONFIG_PACKAGE_procd-ujail=y
-CONFIG_PACKAGE_qos-scripts=y
 CONFIG_PACKAGE_resolveip=y
 CONFIG_PACKAGE_rpcd=y
 CONFIG_PACKAGE_rpcd-mod-file=y
 CONFIG_PACKAGE_rpcd-mod-iwinfo=y
+CONFIG_PACKAGE_rpcd-mod-rpcsys=y
 CONFIG_PACKAGE_rpcd-mod-ucode=y
 CONFIG_PACKAGE_ubox=y
 CONFIG_PACKAGE_ubus=y
@@ -1140,6 +1199,7 @@ CONFIG_PACKAGE_urandom-seed=y
 CONFIG_PACKAGE_urngd=y
 CONFIG_PACKAGE_usign=y
 CONFIG_PACKAGE_wifi-scripts=y
+CONFIG_WIFI_SCRIPTS_UCODE=y
 # end of Base system
 
 #
@@ -1179,7 +1239,9 @@ CONFIG_PACKAGE_trusted-firmware-a-mt7981-ram-ddr3=y
 CONFIG_PACKAGE_trusted-firmware-a-mt7981-ram-ddr4=y
 CONFIG_PACKAGE_trusted-firmware-a-mt7986-ram-ddr3=y
 CONFIG_PACKAGE_trusted-firmware-a-mt7986-ram-ddr4=y
+CONFIG_PACKAGE_trusted-firmware-a-mt7987-ram-comb=y
 CONFIG_PACKAGE_trusted-firmware-a-mt7988-ram-comb=y
+CONFIG_PACKAGE_trusted-firmware-a-mt7988-ram-ddr4=y
 # end of Boot Loaders
 
 #
@@ -1210,6 +1272,7 @@ CONFIG_PACKAGE_libiwinfo-data=y
 
 CONFIG_PACKAGE_eip197-mini-firmware=y
 CONFIG_PACKAGE_mt7981-wo-firmware=y
+CONFIG_PACKAGE_rtl8192eu-firmware=y
 CONFIG_PACKAGE_wireless-regdb=y
 # end of Firmware
 
@@ -1224,6 +1287,11 @@ CONFIG_PACKAGE_wireless-regdb=y
 # end of Fonts
 
 #
+# Games
+#
+# end of Games
+
+#
 # Kernel modules
 #
 
@@ -1234,6 +1302,11 @@ CONFIG_PACKAGE_kmod-scsi-core=y
 # end of Block Devices
 
 #
+# Bluetooth Support
+#
+# end of Bluetooth Support
+
+#
 # CAN Support
 #
 # end of CAN Support
@@ -1241,8 +1314,10 @@ CONFIG_PACKAGE_kmod-scsi-core=y
 #
 # Cryptographic API modules
 #
+CONFIG_PACKAGE_kmod-crypto-acompress=y
 CONFIG_PACKAGE_kmod-crypto-aead=y
 CONFIG_PACKAGE_kmod-crypto-authenc=y
+CONFIG_PACKAGE_kmod-crypto-blake2b=y
 CONFIG_PACKAGE_kmod-crypto-ccm=y
 CONFIG_PACKAGE_kmod-crypto-cmac=y
 CONFIG_PACKAGE_kmod-crypto-crc32c=y
@@ -1269,11 +1344,23 @@ CONFIG_PACKAGE_kmod-crypto-sha1=y
 CONFIG_PACKAGE_kmod-crypto-sha256=y
 CONFIG_PACKAGE_kmod-crypto-sha3=y
 CONFIG_PACKAGE_kmod-crypto-sha512=y
+CONFIG_PACKAGE_kmod-crypto-xxhash=y
 # end of Cryptographic API modules
 
 #
 # Filesystems
 #
+CONFIG_PACKAGE_kmod-fs-btrfs=y
+CONFIG_PACKAGE_kmod-fs-exfat=y
+CONFIG_PACKAGE_kmod-fs-ext4=y
+CONFIG_PACKAGE_kmod-fs-hfs=y
+CONFIG_PACKAGE_kmod-fs-hfsplus=y
+CONFIG_PACKAGE_kmod-fs-isofs=y
+CONFIG_PACKAGE_kmod-fs-nfs=y
+CONFIG_PACKAGE_kmod-fs-nfs-common=y
+CONFIG_PACKAGE_kmod-fs-nfs-v4=y
+CONFIG_PACKAGE_kmod-fs-ntfs3=y
+CONFIG_PACKAGE_kmod-fuse=y
 # end of Filesystems
 
 #
@@ -1296,6 +1383,7 @@ CONFIG_PACKAGE_kmod-hwmon-core=y
 #
 # I2C support
 #
+CONFIG_PACKAGE_kmod-i2c-core=y
 # end of I2C support
 
 #
@@ -1318,7 +1406,16 @@ CONFIG_PACKAGE_kmod-leds-gpio=y
 # Libraries
 #
 CONFIG_PACKAGE_kmod-lib-crc-ccitt=y
+CONFIG_PACKAGE_kmod-lib-crc16=y
 CONFIG_PACKAGE_kmod-lib-crc32c=y
+CONFIG_PACKAGE_kmod-lib-lzo=y
+CONFIG_PACKAGE_kmod-lib-raid6=y
+CONFIG_PACKAGE_kmod-lib-xor=y
+CONFIG_PACKAGE_kmod-lib-xxhash=y
+CONFIG_PACKAGE_kmod-lib-zlib-deflate=y
+CONFIG_PACKAGE_kmod-lib-zlib-inflate=y
+CONFIG_PACKAGE_kmod-lib-zstd=y
+CONFIG_PACKAGE_kmod-oid-registry=y
 # end of Libraries
 
 #
@@ -1330,6 +1427,7 @@ CONFIG_PACKAGE_kmod-lib-crc32c=y
 # Native Language Support
 #
 CONFIG_PACKAGE_kmod-nls-base=y
+CONFIG_PACKAGE_kmod-nls-utf8=y
 # end of Native Language Support
 
 #
@@ -1340,6 +1438,7 @@ CONFIG_PACKAGE_kmod-ipt-conntrack=y
 CONFIG_PACKAGE_kmod-ipt-conntrack-extra=y
 CONFIG_PACKAGE_kmod-ipt-core=y
 CONFIG_PACKAGE_kmod-ipt-ipopt=y
+CONFIG_PACKAGE_kmod-ipt-iprange=y
 CONFIG_PACKAGE_kmod-ipt-ipset=y
 CONFIG_PACKAGE_kmod-nf-conncount=y
 CONFIG_PACKAGE_kmod-nf-conntrack=y
@@ -1353,7 +1452,6 @@ CONFIG_PACKAGE_kmod-nf-log6=y
 CONFIG_PACKAGE_kmod-nf-nat=y
 CONFIG_PACKAGE_kmod-nf-reject=y
 CONFIG_PACKAGE_kmod-nf-reject6=y
-CONFIG_PACKAGE_kmod-nf-socket=y
 CONFIG_PACKAGE_kmod-nf-tproxy=y
 CONFIG_PACKAGE_kmod-nfnetlink=y
 CONFIG_PACKAGE_kmod-nft-compat=y
@@ -1361,19 +1459,16 @@ CONFIG_PACKAGE_kmod-nft-core=y
 CONFIG_PACKAGE_kmod-nft-fib=y
 CONFIG_PACKAGE_kmod-nft-nat=y
 CONFIG_PACKAGE_kmod-nft-offload=y
-CONFIG_PACKAGE_kmod-nft-socket=y
 CONFIG_PACKAGE_kmod-nft-tproxy=y
 # end of Netfilter Extensions
 
 #
 # Network Devices
 #
-CONFIG_PACKAGE_kmod-ifb=y
 CONFIG_PACKAGE_kmod-libphy=y
 CONFIG_PACKAGE_kmod-mdio-devres=y
 CONFIG_PACKAGE_kmod-mii=y
 CONFIG_PACKAGE_kmod-net-selftests=y
-CONFIG_PACKAGE_kmod-phy-aquantia=y
 CONFIG_PACKAGE_kmod-phy-ax88796b=y
 CONFIG_PACKAGE_kmod-phylink=y
 # end of Network Devices
@@ -1381,13 +1476,11 @@ CONFIG_PACKAGE_kmod-phylink=y
 #
 # Network Support
 #
+CONFIG_PACKAGE_kmod-dnsresolver=y
 CONFIG_PACKAGE_kmod-inet-diag=y
-CONFIG_PACKAGE_kmod-netlink-diag=y
 CONFIG_PACKAGE_kmod-ppp=y
 CONFIG_PACKAGE_kmod-pppoe=y
 CONFIG_PACKAGE_kmod-pppox=y
-CONFIG_PACKAGE_kmod-sched-connmark=y
-CONFIG_PACKAGE_kmod-sched-core=y
 CONFIG_PACKAGE_kmod-slhc=y
 CONFIG_PACKAGE_kmod-tun=y
 CONFIG_PACKAGE_kmod-udptunnel4=y
@@ -1425,6 +1518,7 @@ CONFIG_PACKAGE_kmod-thermal=y
 # USB Support
 #
 CONFIG_PACKAGE_kmod-usb-core=y
+CONFIG_PACKAGE_kmod-usb-ehci=y
 CONFIG_PACKAGE_kmod-usb-net=y
 CONFIG_PACKAGE_kmod-usb-net-asix=y
 CONFIG_PACKAGE_kmod-usb-net-asix-ax88179=y
@@ -1436,7 +1530,8 @@ CONFIG_PACKAGE_kmod-usb-net-cdc-subset=y
 CONFIG_PACKAGE_kmod-usb-net-huawei-cdc-ncm=y
 CONFIG_PACKAGE_kmod-usb-net-ipheth=y
 CONFIG_PACKAGE_kmod-usb-net-qmi-wwan=y
-CONFIG_PACKAGE_kmod-usb-net-rndis=y
+CONFIG_PACKAGE_kmod-usb-ohci=y
+CONFIG_PACKAGE_kmod-usb-ohci-pci=y
 CONFIG_PACKAGE_kmod-usb-serial=y
 CONFIG_PACKAGE_kmod-usb-serial-option=y
 CONFIG_PACKAGE_kmod-usb-serial-wwan=y
@@ -1447,7 +1542,10 @@ CONFIG_PACKAGE_kmod-usb-uhci=y
 CONFIG_PACKAGE_kmod-usb-wdm=y
 CONFIG_PACKAGE_kmod-usb-xhci-hcd=y
 CONFIG_PACKAGE_kmod-usb-xhci-mtk=y
+CONFIG_PACKAGE_kmod-usb2=y
+CONFIG_PACKAGE_kmod-usb2-pci=y
 CONFIG_PACKAGE_kmod-usb3=y
+CONFIG_PACKAGE_kmod-usbmon=y
 # end of USB Support
 
 #
@@ -1486,8 +1584,10 @@ CONFIG_PACKAGE_kmod-mt76-connac=y
 CONFIG_PACKAGE_kmod-mt76-core=y
 CONFIG_PACKAGE_kmod-mt7915e=y
 CONFIG_PACKAGE_kmod-mt7981-firmware=y
-CONFIG_PACKAGE_kmod-rtl8xxxu=y
 # end of Wireless Drivers
+
+CONFIG_PACKAGE_kmod-cdrom=y
+CONFIG_PACKAGE_kmod-usb-common=y
 # end of Kernel modules
 
 #
@@ -1497,6 +1597,7 @@ CONFIG_PACKAGE_kmod-rtl8xxxu=y
 #
 # Erlang
 #
+CONFIG_ERLANG_JIT=y
 # end of Erlang
 
 #
@@ -1591,7 +1692,9 @@ CONFIG_RUST_SCCACHE_DIR=""
 # ucode
 #
 CONFIG_PACKAGE_ucode=y
+CONFIG_PACKAGE_ucode-mod-digest=y
 CONFIG_PACKAGE_ucode-mod-fs=y
+CONFIG_PACKAGE_ucode-mod-log=y
 CONFIG_PACKAGE_ucode-mod-math=y
 CONFIG_PACKAGE_ucode-mod-nl80211=y
 CONFIG_PACKAGE_ucode-mod-rtnl=y
@@ -1609,30 +1712,17 @@ CONFIG_PACKAGE_ucode-mod-uloop=y
 #
 # Compression
 #
-CONFIG_PACKAGE_libbz2=y
 # end of Compression
 
 #
 # Database
 #
-CONFIG_PACKAGE_libsqlite3=y
-
-#
-# Configuration
-#
-CONFIG_SQLITE3_COLUMN_METADATA=y
-CONFIG_SQLITE3_DYNAMIC_EXTENSIONS=y
-CONFIG_SQLITE3_FTS3=y
-CONFIG_SQLITE3_FTS4=y
-CONFIG_SQLITE3_FTS5=y
-CONFIG_SQLITE3_RTREE=y
-# end of Configuration
-
 # end of Database
 
 #
 # Filesystem
 #
+CONFIG_PACKAGE_libacl=y
 CONFIG_PACKAGE_libattr=y
 # end of Filesystem
 
@@ -1655,11 +1745,6 @@ CONFIG_PACKAGE_libxtables=y
 #
 CONFIG_PACKAGE_libyaml=y
 # end of Languages
-
-#
-# LibElektra
-#
-# end of LibElektra
 
 #
 # Networking
@@ -1797,19 +1882,52 @@ CONFIG_WOLFSSL_ALT_NAMES=y
 # end of Telephony
 
 #
+# Video
+#
+CONFIG_HAVE_MESA=y
+CONFIG_MESA_USE_LLVM=y
+# end of Video
+
+#
 # libimobiledevice
 #
 # end of libimobiledevice
 
 CONFIG_PACKAGE_bind-libs=y
+CONFIG_PACKAGE_boost=y
+
+#
+# Select Boost Options
+#
+
+#
+# Boost compilation options.
+#
+CONFIG_boost-compile-visibility-hidden=y
+CONFIG_boost-static-and-shared-libs=y
+CONFIG_boost-runtime-shared=y
+CONFIG_boost-variant-release=y
+# end of Select Boost Options
+
+#
+# Select Boost libraries
+#
+
+#
+# Libraries
+#
+# end of Select Boost libraries
+
 CONFIG_PACKAGE_glib2=y
 CONFIG_PACKAGE_jansson=y
 CONFIG_PACKAGE_libavahi-client=y
 CONFIG_PACKAGE_libavahi-dbus-support=y
+CONFIG_PACKAGE_libblkid=y
 CONFIG_PACKAGE_libblobmsg-json=y
 CONFIG_PACKAGE_libbpf=y
 CONFIG_PACKAGE_libcap=y
 CONFIG_PACKAGE_libcap-ng=y
+CONFIG_PACKAGE_libcomerr=y
 CONFIG_PACKAGE_libcurl=y
 
 #
@@ -1825,7 +1943,7 @@ CONFIG_LIBCURL_FTP=y
 CONFIG_LIBCURL_HTTP=y
 CONFIG_LIBCURL_COOKIES=y
 CONFIG_LIBCURL_NO_SMB="!"
-CONFIG_LIBCURL_NGHTTP2=y
+CONFIG_LIBCURL_HTTP2=y
 
 #
 # Miscellaneous
@@ -1835,20 +1953,15 @@ CONFIG_LIBCURL_UNIX_SOCKETS=y
 CONFIG_PACKAGE_libdaemon=y
 CONFIG_PACKAGE_libdbus=y
 CONFIG_PACKAGE_libelf=y
-CONFIG_PACKAGE_libev=y
 CONFIG_PACKAGE_libevent2=y
 CONFIG_PACKAGE_libevent2-core=y
 CONFIG_PACKAGE_libevent2-openssl=y
-CONFIG_PACKAGE_libexif=y
 CONFIG_PACKAGE_libexpat=y
+CONFIG_PACKAGE_libfdisk=y
 CONFIG_PACKAGE_libffi=y
-CONFIG_PACKAGE_libffmpeg-audio-dec=y
-CONFIG_PACKAGE_libflac=y
 CONFIG_PACKAGE_libgmp=y
-CONFIG_PACKAGE_libid3tag=y
 CONFIG_PACKAGE_libiperf3=y
 CONFIG_PACKAGE_libiwinfo=y
-CONFIG_PACKAGE_libjpeg-turbo=y
 CONFIG_PACKAGE_libjson-c=y
 CONFIG_PACKAGE_liblua=y
 CONFIG_PACKAGE_liblucihttp=y
@@ -1858,7 +1971,6 @@ CONFIG_PACKAGE_libmbim=y
 CONFIG_PACKAGE_libmnl=y
 CONFIG_PACKAGE_libncurses=y
 CONFIG_PACKAGE_libnetfilter-conntrack=y
-CONFIG_PACKAGE_libnetsnmp=y
 CONFIG_PACKAGE_libnettle=y
 
 #
@@ -1870,16 +1982,9 @@ CONFIG_PACKAGE_libnfnetlink=y
 CONFIG_PACKAGE_libnftnl=y
 CONFIG_PACKAGE_libnghttp2=y
 CONFIG_PACKAGE_libnl-tiny=y
-CONFIG_PACKAGE_libogg=y
-CONFIG_PACKAGE_libpcap=y
-
-#
-# Configuration
-#
-# end of Configuration
-
-CONFIG_PACKAGE_libpci=y
 CONFIG_PACKAGE_libpcre2=y
+CONFIG_PCRE2_JIT_ENABLED=y
+CONFIG_PACKAGE_libpcre2-16=y
 CONFIG_PACKAGE_libpopt=y
 CONFIG_PACKAGE_libqmi=y
 
@@ -1894,31 +1999,22 @@ CONFIG_LIBQMI_COLLECTION_BASIC=y
 CONFIG_PACKAGE_libqrtr-glib=y
 CONFIG_PACKAGE_libreadline=y
 CONFIG_PACKAGE_libruby=y
-CONFIG_PACKAGE_libsodium=y
-
-#
-# Configuration
-#
-CONFIG_LIBSODIUM_MINIMAL=y
-# end of Configuration
-
+CONFIG_PACKAGE_libsmartcols=y
+CONFIG_PACKAGE_libss=y
 CONFIG_PACKAGE_libtasn1=y
 CONFIG_PACKAGE_libtirpc=y
 CONFIG_PACKAGE_libubox=y
 CONFIG_PACKAGE_libubus=y
 CONFIG_PACKAGE_libubus-lua=y
 CONFIG_PACKAGE_libuci=y
-CONFIG_PACKAGE_libuci-lua=y
 CONFIG_PACKAGE_libuclient=y
 CONFIG_PACKAGE_libucode=y
 CONFIG_PACKAGE_libudebug=y
-CONFIG_PACKAGE_libudns=y
 CONFIG_PACKAGE_liburcu=y
 CONFIG_PACKAGE_liburing=y
 CONFIG_PACKAGE_libustream-mbedtls=y
 CONFIG_PACKAGE_libuuid=y
 CONFIG_PACKAGE_libuv=y
-CONFIG_PACKAGE_libvorbis=y
 CONFIG_PACKAGE_libwebsockets-full=y
 CONFIG_PACKAGE_rpcd-mod-luci=y
 CONFIG_PACKAGE_rpcd-mod-rrdns=y
@@ -1969,31 +2065,15 @@ CONFIG_PACKAGE_luci-mod-system=y
 #
 CONFIG_PACKAGE_luci-app-argon-config=y
 CONFIG_PACKAGE_luci-app-aria2=y
-CONFIG_PACKAGE_luci-app-cloudflared=y
+CONFIG_PACKAGE_luci-app-attendedsysupgrade=y
 CONFIG_PACKAGE_luci-app-ddns=y
 CONFIG_PACKAGE_luci-app-firewall=y
-CONFIG_PACKAGE_luci-app-minidlna=y
 CONFIG_PACKAGE_luci-app-mwan3=y
 CONFIG_PACKAGE_luci-app-openclash=y
 CONFIG_PACKAGE_ipset=y
-CONFIG_PACKAGE_luci-app-openlist=y
 CONFIG_PACKAGE_luci-app-package-manager=y
-CONFIG_PACKAGE_luci-app-passwall2=y
-
-#
-# Configuration
-#
-CONFIG_PACKAGE_luci-app-passwall2_Nftables_Transparent_Proxy=y
-CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Hysteria=y
-CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Shadowsocks_Rust_Client=y
-CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_ShadowsocksR_Libev_Client=y
-CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_SingBox=y
-# end of Configuration
-
-CONFIG_PACKAGE_luci-app-qos=y
 CONFIG_PACKAGE_luci-app-samba4=y
 CONFIG_PACKAGE_luci-app-smartdns=y
-CONFIG_PACKAGE_luci-app-snmpd=y
 CONFIG_PACKAGE_luci-app-ttyd=y
 CONFIG_PACKAGE_luci-app-udpxy=y
 CONFIG_PACKAGE_luci-app-uhttpd=y
@@ -2033,19 +2113,14 @@ CONFIG_PACKAGE_luci-lib-uqr=y
 
 CONFIG_PACKAGE_luci-i18n-argon-config-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-aria2-zh-cn=y
+CONFIG_PACKAGE_luci-i18n-attendedsysupgrade-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-base-zh-cn=y
-CONFIG_PACKAGE_luci-i18n-cloudflared-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-ddns-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-firewall-zh-cn=y
-CONFIG_PACKAGE_luci-i18n-minidlna-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-mwan3-zh-cn=y
-CONFIG_PACKAGE_luci-i18n-openlist-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-package-manager-zh-cn=y
-CONFIG_PACKAGE_luci-i18n-passwall2-zh-cn=y
-CONFIG_PACKAGE_luci-i18n-qos-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-samba4-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-smartdns-zh-cn=y
-CONFIG_PACKAGE_luci-i18n-snmpd-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-ttyd-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-udpxy-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-uhttpd-zh-cn=y
@@ -2068,7 +2143,6 @@ CONFIG_PACKAGE_luci-i18n-xfrpc-zh-cn=y
 #
 # end of Streaming
 
-CONFIG_PACKAGE_minidlna=y
 # end of Multimedia
 
 #
@@ -2099,7 +2173,6 @@ CONFIG_PACKAGE_minidlna=y
 # Download Manager
 #
 CONFIG_PACKAGE_ariang=y
-CONFIG_PACKAGE_webui-aria2=y
 # end of Download Manager
 
 #
@@ -2118,7 +2191,6 @@ CONFIG_ARIA2_WEBSOCKET=y
 
 CONFIG_PACKAGE_aria2-openssl=y
 CONFIG_PACKAGE_curl=y
-CONFIG_PACKAGE_wget-ssl=y
 # end of File Transfer
 
 #
@@ -2132,6 +2204,7 @@ CONFIG_PACKAGE_wget-ssl=y
 CONFIG_PACKAGE_ip6tables-nft=y
 CONFIG_PACKAGE_iptables-mod-conntrack-extra=y
 CONFIG_PACKAGE_iptables-mod-ipopt=y
+CONFIG_PACKAGE_iptables-mod-iprange=y
 CONFIG_PACKAGE_iptables-nft=y
 
 #
@@ -2173,14 +2246,12 @@ CONFIG_PACKAGE_bind-nslookup=y
 CONFIG_PACKAGE_bind-rndc=y
 CONFIG_BIND_ENABLE_DOH=y
 CONFIG_PACKAGE_bind-tools=y
-CONFIG_PACKAGE_chinadns-ng=y
 CONFIG_PACKAGE_ddns-scripts=y
+CONFIG_PACKAGE_ddns-scripts-aliyun=y
 CONFIG_PACKAGE_ddns-scripts-cloudflare=y
 CONFIG_PACKAGE_ddns-scripts-dnspod=y
 CONFIG_PACKAGE_ddns-scripts-dnspod-v3=y
-CONFIG_PACKAGE_ddns-scripts-godaddy=y
 CONFIG_PACKAGE_ddns-scripts-services=y
-CONFIG_PACKAGE_geoview=y
 
 #
 # Configuration
@@ -2188,8 +2259,7 @@ CONFIG_PACKAGE_geoview=y
 CONFIG_PACKAGE_knot-resolver_dnstap=y
 # end of Configuration
 
-CONFIG_PACKAGE_v2ray-geoip=y
-CONFIG_PACKAGE_v2ray-geosite=y
+CONFIG_PACKAGE_smartdns=y
 CONFIG_PACKAGE_wsdd2=y
 # end of IP Addresses and Names
 
@@ -2219,11 +2289,6 @@ CONFIG_PACKAGE_wsdd2=y
 # end of NTRIP
 
 #
-# OLSR.org network framework
-#
-# end of OLSR.org network framework
-
-#
 # Open vSwitch
 #
 # end of Open vSwitch
@@ -2243,7 +2308,6 @@ CONFIG_PACKAGE_wsdd2=y
 #
 CONFIG_PACKAGE_ip-full=y
 CONFIG_PACKAGE_mwan3=y
-CONFIG_PACKAGE_tc-tiny=y
 # end of Routing and Redirection
 
 #
@@ -2300,18 +2364,6 @@ CONFIG_PACKAGE_uqmi=y
 # Web Servers/Proxies
 #
 CONFIG_PACKAGE_cgi-io=y
-CONFIG_PACKAGE_cloudflared=y
-CONFIG_PACKAGE_shadowsocks-rust-sslocal=y
-CONFIG_PACKAGE_shadowsocksr-libev-ssr-local=y
-CONFIG_PACKAGE_shadowsocksr-libev-ssr-redir=y
-CONFIG_PACKAGE_sing-box=y
-CONFIG_SING_BOX_BUILD_ACME=y
-CONFIG_SING_BOX_BUILD_CLASH_API=y
-CONFIG_SING_BOX_BUILD_GVISOR=y
-CONFIG_SING_BOX_BUILD_QUIC=y
-CONFIG_SING_BOX_BUILD_TAILSCALE=y
-CONFIG_SING_BOX_BUILD_UTLS=y
-CONFIG_SING_BOX_BUILD_WIREGUARD=y
 CONFIG_PACKAGE_uhttpd=y
 CONFIG_PACKAGE_uhttpd-mod-ubus=y
 CONFIG_PACKAGE_xfrpc=y
@@ -2340,31 +2392,23 @@ CONFIG_PACKAGE_wpad-mesh-openssl=y
 
 CONFIG_PACKAGE_chat=y
 CONFIG_PACKAGE_etherwake=y
-CONFIG_PACKAGE_hysteria=y
 CONFIG_PACKAGE_iperf3=y
 CONFIG_PACKAGE_iw=y
+CONFIG_PACKAGE_krb5-libs=y
 CONFIG_PACKAGE_libipset=y
 CONFIG_PACKAGE_modemmanager=y
 
 #
 # Configuration
 #
+CONFIG_MODEMMANAGER_WITH_NETIFD=y
 CONFIG_MODEMMANAGER_WITH_MBIM=y
 CONFIG_MODEMMANAGER_WITH_QMI=y
 CONFIG_MODEMMANAGER_WITH_QRTR=y
 # end of Configuration
 
 CONFIG_PACKAGE_odhcp6c=y
-CONFIG_PACKAGE_odhcp6c_ext_cer_id=0
 CONFIG_PACKAGE_odhcpd-ipv6only=y
-
-#
-# Configuration
-#
-CONFIG_PACKAGE_odhcpd_ipv6only_ext_cer_id=0
-# end of Configuration
-
-CONFIG_PACKAGE_openlist=y
 CONFIG_PACKAGE_ppp=y
 CONFIG_PACKAGE_ppp-mod-pppoe=y
 CONFIG_PACKAGE_samba4-libs=y
@@ -2373,14 +2417,9 @@ CONFIG_SAMBA4_SERVER_WSDD2=y
 CONFIG_SAMBA4_SERVER_NETBIOS=y
 CONFIG_SAMBA4_SERVER_AVAHI=y
 CONFIG_SAMBA4_SERVER_VFS=y
-CONFIG_PACKAGE_smartdns=y
-CONFIG_PACKAGE_snmpd=y
-CONFIG_PACKAGE_tcpdump=y
-CONFIG_PACKAGE_tcping=y
 CONFIG_PACKAGE_uclient-fetch=y
 CONFIG_PACKAGE_udpxy=y
 CONFIG_PACKAGE_wwan=y
-CONFIG_PACKAGE_xray-core=y
 # end of Network
 
 #
@@ -2405,6 +2444,7 @@ CONFIG_PACKAGE_xray-core=y
 #
 # Boot Loaders
 #
+CONFIG_PACKAGE_fit-check-sign=y
 CONFIG_PACKAGE_uboot-envtools=y
 # end of Boot Loaders
 
@@ -2422,6 +2462,8 @@ CONFIG_PACKAGE_unzip=y
 #
 # Disc
 #
+CONFIG_PACKAGE_blkid=y
+CONFIG_PACKAGE_fdisk=y
 # end of Disc
 
 #
@@ -2475,7 +2517,6 @@ CONFIG_PACKAGE_bash=y
 #
 # Terminal
 #
-CONFIG_PACKAGE_minicom=y
 CONFIG_PACKAGE_ttyd=y
 # end of Terminal
 
@@ -2495,6 +2536,11 @@ CONFIG_PACKAGE_ttyd=y
 # end of Utilities
 
 #
+# Video
+#
+# end of Video
+
+#
 # Virtualization
 #
 # end of Virtualization
@@ -2509,11 +2555,58 @@ CONFIG_PACKAGE_ttyd=y
 #
 # end of libselinux tools
 
+CONFIG_PACKAGE_coremark=m
+CONFIG_COREMARK_OPTIMIZE_O3=y
+CONFIG_COREMARK_ENABLE_MULTITHREADING=y
+CONFIG_COREMARK_NUMBER_OF_THREADS=2
 CONFIG_PACKAGE_coreutils=y
 CONFIG_PACKAGE_coreutils-base64=y
-CONFIG_PACKAGE_coreutils-nohup=y
+CONFIG_PACKAGE_coreutils-basename=y
+CONFIG_PACKAGE_coreutils-cat=y
+CONFIG_PACKAGE_coreutils-chgrp=y
+CONFIG_PACKAGE_coreutils-chmod=y
+CONFIG_PACKAGE_coreutils-chown=y
+CONFIG_PACKAGE_coreutils-chroot=y
+CONFIG_PACKAGE_coreutils-cksum=y
+CONFIG_PACKAGE_coreutils-cp=y
+CONFIG_PACKAGE_coreutils-cut=y
+CONFIG_PACKAGE_coreutils-date=y
+CONFIG_PACKAGE_coreutils-dd=y
+CONFIG_PACKAGE_coreutils-df=y
+CONFIG_PACKAGE_coreutils-dir=y
+CONFIG_PACKAGE_coreutils-dircolors=y
+CONFIG_PACKAGE_coreutils-dirname=y
+CONFIG_PACKAGE_coreutils-du=y
+CONFIG_PACKAGE_coreutils-groups=y
+CONFIG_PACKAGE_coreutils-head=y
+CONFIG_PACKAGE_coreutils-kill=y
+CONFIG_PACKAGE_coreutils-md5sum=y
+CONFIG_PACKAGE_coreutils-mkdir=y
+CONFIG_PACKAGE_coreutils-mknod=y
+CONFIG_PACKAGE_coreutils-mktemp=y
+CONFIG_PACKAGE_coreutils-mv=y
+CONFIG_PACKAGE_coreutils-pwd=y
+CONFIG_PACKAGE_coreutils-rm=y
+CONFIG_PACKAGE_coreutils-rmdir=y
+CONFIG_PACKAGE_coreutils-sha256sum=y
+CONFIG_PACKAGE_coreutils-sha384sum=y
+CONFIG_PACKAGE_coreutils-sha512sum=y
+CONFIG_PACKAGE_coreutils-sleep=y
+CONFIG_PACKAGE_coreutils-sort=y
+CONFIG_PACKAGE_coreutils-sync=y
+CONFIG_PACKAGE_coreutils-tail=y
+CONFIG_PACKAGE_coreutils-tee=y
+CONFIG_PACKAGE_coreutils-touch=y
+CONFIG_PACKAGE_coreutils-true=y
+CONFIG_PACKAGE_coreutils-uname=y
+CONFIG_PACKAGE_coreutils-uptime=y
+CONFIG_PACKAGE_coreutils-users=y
+CONFIG_PACKAGE_coreutils-wc=y
+CONFIG_PACKAGE_coreutils-who=y
+CONFIG_PACKAGE_coreutils-whoami=y
+CONFIG_PACKAGE_coreutils-yes=y
 CONFIG_PACKAGE_dbus=y
-CONFIG_PACKAGE_iwinfo=y
+CONFIG_PACKAGE_dmesg=y
 CONFIG_PACKAGE_jshn=y
 CONFIG_PACKAGE_libjson-script=y
 CONFIG_PACKAGE_openssl-util=y
@@ -2523,11 +2616,40 @@ CONFIG_PACKAGE_openssl-util=y
 #
 # end of Configuration
 
+CONFIG_PACKAGE_procps-ng=y
+CONFIG_PACKAGE_procps-ng-free=y
+CONFIG_PACKAGE_procps-ng-kill=y
+CONFIG_PACKAGE_procps-ng-pgrep=y
+CONFIG_PACKAGE_procps-ng-pkill=y
+CONFIG_PACKAGE_procps-ng-pmap=y
+CONFIG_PACKAGE_procps-ng-ps=y
+CONFIG_PACKAGE_procps-ng-pwdx=y
+CONFIG_PACKAGE_procps-ng-skill=y
+CONFIG_PACKAGE_procps-ng-slabtop=y
+CONFIG_PACKAGE_procps-ng-snice=y
+CONFIG_PACKAGE_procps-ng-sysctl=y
+CONFIG_PACKAGE_procps-ng-tload=y
+CONFIG_PACKAGE_procps-ng-top=y
+CONFIG_PACKAGE_procps-ng-uptime=y
+CONFIG_PACKAGE_procps-ng-vmstat=y
+CONFIG_PACKAGE_procps-ng-w=y
+CONFIG_PACKAGE_procps-ng-watch=y
+CONFIG_PACKAGE_procs=y
 CONFIG_STRACE_NONE=y
 CONFIG_PACKAGE_ubi-utils=y
 CONFIG_PACKAGE_ucode-mod-html=y
 CONFIG_PACKAGE_ucode-mod-lua=y
 # end of Utilities
+
+#
+# Video
+#
+
+#
+# Frameworks and Toolkits
+#
+# end of Frameworks and Toolkits
+# end of Video
 
 #
 # Xorg
