@@ -112,6 +112,8 @@ jobs:
           git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git package/feeds/luci/luci-theme-argon
           git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2.git package/feeds/openwrt-passwall2
           git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages.git package/feeds/openwrt-passwall-packages
+          rm -rf feeds/packages/lang/golang
+          git clone --depth=1 https://github.com/kenzok8/golang -b 1.25 feeds/packages/lang/golang
           rm -rf feeds/packages/net/{microsocks,sing-box,v2ray-geodata,xray-core}
           ./scripts/feeds update -a && ./scripts/feeds install -a
           cp /tmp/.config .config
