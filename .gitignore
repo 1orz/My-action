@@ -1,0 +1,36 @@
+# OpenWrt 构建产物
+openwrt-build/
+output/
+
+# Docker 相关
+.docker/
+
+# 编译缓存
+.ccache/
+.cache/
+
+# 临时文件
+*.tmp
+*.log
+*.bak
+*.old
+
+# IDE 和编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Linux
+*.o
+*.a
+*.so
+
+# 环境文件
+.env
+.env.local
+

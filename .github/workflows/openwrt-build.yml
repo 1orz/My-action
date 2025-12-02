@@ -1,0 +1,356 @@
+name: OpenWrt Build
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+
+  push:
+    branches:
+      - main
+    paths:
+      - "openwrt/**"
+      - "prenv.sh"
+      - ".github/workflows/openwrt-build.yml"
+
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Build Target"
+        required: true
+        type: choice
+        options:
+          - all
+          - arm64-tr3000
+          - arm64-glinet-mt3000
+          - armsr-aarch64
+          - mips-redmi-ac2100
+          - x86-x64
+        default: "all"
+
+      runner_image:
+        description: "Runner Image"
+        required: false
+        type: string
+        default: "ubuntu-latest"
+
+      clean_build:
+        description: "Skip cache and clean build"
+        type: boolean
+        default: false
+
+      debug_ssh:
+        description: "Enable SSH debugging"
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    runs-on: ${{ inputs.runner_image || 'ubuntu-latest' }}
+    permissions:
+      contents: write
+      actions: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: arm64-tr3000
+            config_file: openwrt/arm64-tr3000.config
+            cache_key: openwrt_arm64_tr3000
+            pkg_arch: aarch64_generic
+            release_prefix: openwrt-arm64-tr3000
+            with_openclash: true
+            extra_files_pattern: "mt79*"
+
+          - name: arm64-glinet-mt3000
+            config_file: openwrt/arm64-glinet-mt3000.config
+            cache_key: openwrt_arm64_glinet_mt3000
+            pkg_arch: aarch64_generic
+            release_prefix: openwrt-arm64-glinet-mt3000
+            with_openclash: true
+            extra_files_pattern: "mt79*"
+
+          - name: armsr-aarch64
+            config_file: openwrt/armsr-aarch64.config
+            cache_key: openwrt_armsr_armv8
+            pkg_arch: aarch64_generic
+            release_prefix: openwrt-armsr-aarch64
+            with_openclash: false
+            extra_files_pattern: ""
+
+          - name: mips-redmi-ac2100
+            config_file: openwrt/mips-redmi-ac2100.config
+            cache_key: openwrt_mips_redmi_ac2100
+            pkg_arch: mipsel_24kc
+            release_prefix: openwrt-mips-redmi-ac2100
+            with_openclash: false
+            extra_files_pattern: ""
+
+          - name: x86-x64
+            config_file: openwrt/x86-64.config
+            cache_key: openwrt_x86_64
+            pkg_arch: x86_64
+            release_prefix: openwrt-x86-64
+            with_openclash: false
+            extra_files_pattern: ""
+
+    steps:
+      - name: Check Build Target
+        id: check
+        run: |
+          if [[ "${{ github.event_name }}" != "workflow_dispatch" ]] || \
+             [[ "${{ inputs.target }}" == "all" ]] || \
+             [[ "${{ inputs.target }}" == "${{ matrix.name }}" ]]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping ${{ matrix.name }} (target: ${{ inputs.target }})"
+          fi
+
+      - name: Maximize Build Space
+        if: steps.check.outputs.should_build == 'true'
+        uses: easimon/maximize-build-space@master
+        with:
+          swap-size-mb: 1024
+          temp-reserve-mb: 100
+          root-reserve-mb: 1024
+
+      - name: Free Disk Space
+        if: steps.check.outputs.should_build == 'true'
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Checkout Repository
+        if: steps.check.outputs.should_build == 'true'
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+
+      - name: Prepare Build Environment
+        if: steps.check.outputs.should_build == 'true'
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          bash prenv.sh
+          cp "${{ matrix.config_file }}" /tmp/.config
+
+      - name: Show System Info
+        if: steps.check.outputs.should_build == 'true'
+        run: |
+          echo "==================== System Info ===================="
+          uname -a
+          echo ""
+          echo "==================== CPU Info ===================="
+          echo "Physical CPUs: $(cat /proc/cpuinfo | grep 'physical id' | sort -u | wc -l)"
+          echo "CPU Cores: $(nproc)"
+          echo "CPU Model: $(cat /proc/cpuinfo | grep -m1 'model name' | cut -d: -f2 | xargs)"
+          echo ""
+          echo "==================== Memory Info ===================="
+          free -h
+          echo ""
+          echo "==================== Disk Info ===================="
+          df -hT
+
+      - name: Checkout OpenWrt
+        if: steps.check.outputs.should_build == 'true'
+        uses: actions/checkout@main
+        with:
+          repository: openwrt/openwrt
+          fetch-depth: 0
+          ref: openwrt-24.10
+
+      - name: Setup Build Cache
+        if: steps.check.outputs.should_build == 'true'
+        uses: stupidloud/cachewrtbuild@main
+        with:
+          ccache: true
+          toolchain: true
+          mixkey: ${{ matrix.cache_key }}
+          skip: ${{ !inputs.clean_build || true }}
+          clean: ${{ inputs.clean_build || false }}
+
+      - name: Setup SSH Debug Session
+        if: steps.check.outputs.should_build == 'true' && inputs.debug_ssh
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+
+      - name: Load Custom Configuration
+        if: steps.check.outputs.should_build == 'true'
+        run: |
+          set -ex
+
+          # Enable ccache
+          echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config
+
+          # Clean up existing packages
+          rm -rf package/feeds/openwrt-passwall2 package/feeds/openwrt-passwall-packages
+
+          # Clone theme packages
+          git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git package/feeds/luci/luci-app-argon-config
+          git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git package/feeds/luci/luci-theme-argon
+
+          # Clone passwall packages
+          git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2.git package/feeds/openwrt-passwall2
+          git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages.git package/feeds/openwrt-passwall-packages
+
+          # Clone OpenClash (only for specific targets)
+          if [ "${{ matrix.with_openclash }}" = "true" ]; then
+            git clone -b dev --depth=1 https://github.com/vernesong/OpenClash package/feeds/luci/openclash
+          fi
+
+          # Remove conflicting packages
+          rm -rf feeds/packages/net/{microsocks,sing-box,v2ray-geodata,xray-core}
+
+          # Update and install feeds
+          ./scripts/feeds update -a && ./scripts/feeds install -a
+
+          # Replace golang with newer version
+          rm -rf feeds/packages/lang/golang
+          git clone --depth=1 https://github.com/kenzok8/golang -b 1.25 feeds/packages/lang/golang
+
+          # Apply config
+          cp /tmp/.config .config
+          make defconfig clean
+
+          # Patch Rust CI LLVM setting
+          sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/g' feeds/packages/lang/rust/Makefile
+
+      - name: Compile Firmware
+        if: steps.check.outputs.should_build == 'true'
+        run: |
+          echo "Building with $(nproc) threads..."
+          df -h
+          make -j$(nproc) || make -j1 V=99
+          df -h
+
+      - name: Prepare Image Artifacts
+        if: steps.check.outputs.should_build == 'true'
+        run: |
+          mkdir -p images
+          mv bin/targets/*/*/openwrt-* images/
+          mv bin/targets/*/*/sha256sums images/
+          mv bin/targets/*/*/*.buildinfo images/ || true
+          mv bin/targets/*/*/profiles.json images/ || true
+
+          # Move extra files if pattern is specified
+          if [ -n "${{ matrix.extra_files_pattern }}" ]; then
+            mv bin/targets/*/*/${{ matrix.extra_files_pattern }} images/ || true
+          fi
+
+      - name: Upload Image Artifacts
+        if: steps.check.outputs.should_build == 'true'
+        uses: actions/upload-artifact@main
+        with:
+          compression-level: 9
+          include-hidden-files: true
+          name: ${{ matrix.release_prefix }}-images
+          path: images
+
+      - name: Prepare Package Artifacts
+        if: steps.check.outputs.should_build == 'true'
+        run: |
+          mkdir -p pkgs/packages/feeds
+          mv bin/targets/*/*/packages pkgs/packages/ || true
+          mv bin/packages/${{ matrix.pkg_arch }} pkgs/packages/feeds/ || true
+          ls -lh pkgs/packages/ | head -40 || true
+
+      - name: Upload Package Artifacts
+        if: steps.check.outputs.should_build == 'true'
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ matrix.release_prefix }}-packages
+          path: pkgs
+
+      - name: Create Release Package
+        if: steps.check.outputs.should_build == 'true'
+        run: |
+          set -eux
+          ts=$(date +'%Y%m%d%H%M%S')
+          echo "RELEASE_TS=$ts" >> "$GITHUB_ENV"
+          if [ -d pkgs/packages ]; then
+            (cd pkgs && zip -r -o -q -9 "../packages_${ts}.zip" packages)
+          fi
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.should_build == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}" \
+            --title "${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}" \
+            --notes "OpenWrt firmware build for **${{ matrix.name }}**
+
+          - Commit: ${{ github.sha }}
+          - Branch: openwrt-24.10
+          - Build Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" \
+            --draft \
+            -R "${{ github.repository }}"
+
+      - name: Upload Release Assets
+        if: steps.check.outputs.should_build == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eux
+          shopt -s nullglob
+
+          # Upload images
+          files=(images/*)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No firmware files found" >&2
+            exit 1
+          fi
+          echo "Uploading firmware files:"
+          ls -lh images/
+          gh release upload "${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}" "${files[@]}" \
+            -R "${{ github.repository }}" --clobber
+
+          # Upload packages zip if exists
+          if [ -f "packages_${{ env.RELEASE_TS }}.zip" ]; then
+            gh release upload "${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}" \
+              "packages_${{ env.RELEASE_TS }}.zip" -R "${{ github.repository }}" --clobber
+          fi
+
+      - name: Publish Release
+        if: steps.check.outputs.should_build == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release edit "${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}" \
+            --draft=false --latest -R "${{ github.repository }}"
+
+      - name: Cleanup Old Releases
+        if: steps.check.outputs.should_build == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RELEASE_PREFIX="${{ matrix.release_prefix }}-"
+          echo "Cleaning up releases with prefix: $RELEASE_PREFIX"
+          releases=$(gh release list -R "${{ github.repository }}" --limit 100 \
+            | grep "^${RELEASE_PREFIX}" | awk '{print $1}' | tail -n +3) || true
+          for tag in $releases; do
+            echo "Deleting release: $tag"
+            gh release delete "$tag" -R "${{ github.repository }}" --yes --cleanup-tag || true
+          done
+
+      - name: Cleanup Old Workflow Runs
+        if: steps.check.outputs.should_build == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Cleaning up old workflow runs..."
+          run_ids=$(gh run list -w "${{ github.workflow }}" -R "${{ github.repository }}" \
+            --status success --limit 100 --json databaseId -q '.[].databaseId' | tail -n +3) || true
+          for run_id in $run_ids; do
+            echo "Deleting run: $run_id"
+            gh run delete "$run_id" -R "${{ github.repository }}" || true
+          done
