@@ -165,7 +165,7 @@ jobs:
         with:
           repository: openwrt/openwrt
           fetch-depth: 0
-          ref: openwrt-24.10
+          ref: openwrt-25.12
 
       - name: Setup Build Cache
         if: steps.check.outputs.should_build == 'true'
@@ -290,7 +290,7 @@ jobs:
             --notes "OpenWrt firmware build for **${{ matrix.name }}**
 
           - Commit: ${{ github.sha }}
-          - Branch: openwrt-24.10
+          - Branch: openwrt-25.12
           - Build Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" \
             --draft \
             -R "${{ github.repository }}"
