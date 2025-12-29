@@ -214,8 +214,8 @@ jobs:
           ./scripts/feeds update -a && ./scripts/feeds install -a
 
           # Replace golang with newer version
-          # rm -rf feeds/packages/lang/golang
-          # git clone --depth=1 https://github.com/kenzok8/golang -b 1.25 feeds/packages/lang/golang
+          rm -rf feeds/packages/lang/golang
+          git clone --depth=1 https://github.com/1orz/openwrt-golang feeds/packages/lang/golang
 
           # Apply config
           cp /tmp/.config .config
