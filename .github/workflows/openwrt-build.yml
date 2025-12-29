@@ -214,8 +214,8 @@ jobs:
           ./scripts/feeds update -a && ./scripts/feeds install -a
 
           # Replace golang with newer version
-          rm -rf feeds/packages/lang/golang
-          git clone --depth=1 https://github.com/1orz/openwrt-golang feeds/packages/lang/golang
+          # rm -rf feeds/packages/lang/golang
+          # git clone --depth=1 https://github.com/1orz/openwrt-golang feeds/packages/lang/golang
 
           # Apply config
           cp /tmp/.config .config
@@ -327,30 +327,3 @@ jobs:
         run: |
           gh release edit "${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}" \
             --draft=false --latest -R "${{ github.repository }}"
-
-      - name: Cleanup Old Releases
-        if: steps.check.outputs.should_build == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          RELEASE_PREFIX="${{ matrix.release_prefix }}-"
-          echo "Cleaning up releases with prefix: $RELEASE_PREFIX"
-          releases=$(gh release list -R "${{ github.repository }}" --limit 100 \
-            | grep "^${RELEASE_PREFIX}" | awk '{print $1}' | tail -n +3) || true
-          for tag in $releases; do
-            echo "Deleting release: $tag"
-            gh release delete "$tag" -R "${{ github.repository }}" --yes --cleanup-tag || true
-          done
-
-      - name: Cleanup Old Workflow Runs
-        if: steps.check.outputs.should_build == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Cleaning up old workflow runs..."
-          run_ids=$(gh run list -w "${{ github.workflow }}" -R "${{ github.repository }}" \
-            --status success --limit 100 --json databaseId -q '.[].databaseId' | tail -n +3) || true
-          for run_id in $run_ids; do
-            echo "Deleting run: $run_id"
-            gh run delete "$run_id" -R "${{ github.repository }}" || true
-          done
