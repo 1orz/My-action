@@ -188,6 +188,8 @@ jobs:
         run: |
           set -ex
 
+          echo 'src-git modemfeed https://github.com/koshev-msk/modemfeed.git' >> feeds.conf.default
+
           # Enable ccache
           echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config
 
