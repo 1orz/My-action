@@ -202,12 +202,12 @@ jobs:
           git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git package/feeds/luci/luci-theme-argon
 
           # Clone OpenClash (only for specific targets)
-          if [ "${{ matrix.with_openclash }}" = "true" ]; then
-            git clone -b dev --depth=1 https://github.com/vernesong/OpenClash package/feeds/luci/openclash
-          fi
+          # if [ "${{ matrix.with_openclash }}" = "true" ]; then
+          #   git clone -b dev --depth=1 https://github.com/vernesong/OpenClash package/feeds/luci/openclash
+          # fi
 
           # Remove conflicting packages
-          rm -rf feeds/packages/net/{microsocks,sing-box,v2ray-geodata,xray-core}
+          # rm -rf feeds/packages/net/{microsocks,sing-box,v2ray-geodata,xray-core}
 
           # Update and install feeds
           ./scripts/feeds update -a && ./scripts/feeds install -a
@@ -221,7 +221,7 @@ jobs:
           make defconfig clean
 
           # Patch Rust CI LLVM setting
-          sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/g' feeds/packages/lang/rust/Makefile
+          # sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/g' feeds/packages/lang/rust/Makefile
 
       - name: Compile Firmware
         if: steps.check.outputs.should_build == 'true'
