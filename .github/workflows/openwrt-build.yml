@@ -188,21 +188,18 @@ jobs:
         run: |
           set -ex
 
+          # Add Passwall feeds to the top of feeds.conf.default
+          sed -i '1i src-git passwall_luci https://github.com/Openwrt-Passwall/openwrt-passwall.git;main' feeds.conf.default
+          sed -i '1i src-git passwall_packages https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git;main' feeds.conf.default
+
           echo 'src-git modemfeed https://github.com/koshev-msk/modemfeed.git' >> feeds.conf.default
 
           # Enable ccache
           echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config
 
-          # Clean up existing packages
-          rm -rf package/feeds/openwrt-passwall2 package/feeds/openwrt-passwall-packages
-
           # Clone theme packages
           git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git package/feeds/luci/luci-app-argon-config
           git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git package/feeds/luci/luci-theme-argon
-
-          # Clone passwall packages
-          git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2.git package/feeds/openwrt-passwall2
-          git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages.git package/feeds/openwrt-passwall-packages
 
           # Clone OpenClash (only for specific targets)
           if [ "${{ matrix.with_openclash }}" = "true" ]; then
