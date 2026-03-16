@@ -194,8 +194,8 @@ jobs:
           sed -i '1i src-git helloworld https://github.com/fw876/helloworld.git;master' feeds.conf.default
 
           # Clone theme packages
-          git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git package/feeds/luci/luci-app-argon-config
-          git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git package/feeds/luci/luci-theme-argon
+          # git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git package/feeds/luci/luci-app-argon-config
+          # git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git package/feeds/luci/luci-theme-argon
 
           # Update and install feeds
           ./scripts/feeds update -a && ./scripts/feeds install -a
