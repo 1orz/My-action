@@ -188,40 +188,42 @@ jobs:
         run: |
           set -ex
 
-          # Add Passwall feeds to the top of feeds.conf.default
+          # Add third-party feeds
           sed -i '1i src-git passwall_luci https://github.com/Openwrt-Passwall/openwrt-passwall.git;main' feeds.conf.default
           sed -i '1i src-git passwall_packages https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git;main' feeds.conf.default
-
+          sed -i '1i src-git helloworld https://github.com/fw876/helloworld.git;master' feeds.conf.default
           echo 'src-git modemfeed https://github.com/koshev-msk/modemfeed.git' >> feeds.conf.default
-
-          # Enable ccache
-          echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config
 
           # Clone theme packages
           git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git package/feeds/luci/luci-app-argon-config
           git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git package/feeds/luci/luci-theme-argon
 
-          # Clone OpenClash (only for specific targets)
-          # if [ "${{ matrix.with_openclash }}" = "true" ]; then
-          #   git clone -b dev --depth=1 https://github.com/vernesong/OpenClash package/feeds/luci/openclash
-          # fi
-
-          # Remove conflicting packages
-          # rm -rf feeds/packages/net/{microsocks,sing-box,v2ray-geodata,xray-core}
+          # Clone OpenClash
+          git clone -b dev --depth=1 https://github.com/vernesong/OpenClash package/feeds/luci/openclash
 
           # Update and install feeds
           ./scripts/feeds update -a && ./scripts/feeds install -a
 
-          # Replace golang with newer version
-          # rm -rf feeds/packages/lang/golang
-          # git clone --depth=1 https://github.com/1orz/openwrt-golang feeds/packages/lang/golang
-
-          # Apply config
+          # Apply config, then append ccache settings (cp must come first)
           cp /tmp/.config .config
-          make defconfig clean
+          echo 'CONFIG_DEVEL=y' >> .config
+          echo 'CONFIG_CCACHE=y' >> .config
+          make defconfig
 
-          # Patch Rust CI LLVM setting
-          # sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/g' feeds/packages/lang/rust/Makefile
+          # Show what make defconfig changed (debug: detect silently removed packages)
+          echo "=== Packages enabled in final config ==="
+          grep -c '^CONFIG_PACKAGE_.*=y' .config || true
+          echo "=== Packages set to module ==="
+          grep -c '^CONFIG_PACKAGE_.*=m' .config || true
+
+          # Verify key packages are still enabled
+          for pkg in luci luci-base luci-theme-bootstrap luci-app-firewall luci-app-ssr-plus luci-app-openclash; do
+            if grep -q "^CONFIG_PACKAGE_${pkg}=y" .config; then
+              echo "OK: ${pkg} is enabled"
+            else
+              echo "WARNING: ${pkg} was REMOVED by make defconfig!"
+            fi
+          done
 
       - name: Compile Firmware
         if: steps.check.outputs.should_build == 'true'
