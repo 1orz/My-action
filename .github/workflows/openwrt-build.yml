@@ -192,20 +192,18 @@ jobs:
           sed -i '1i src-git passwall_luci https://github.com/Openwrt-Passwall/openwrt-passwall.git;main' feeds.conf.default
           sed -i '1i src-git passwall_packages https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git;main' feeds.conf.default
           sed -i '1i src-git helloworld https://github.com/fw876/helloworld.git;master' feeds.conf.default
-          echo 'src-git modemfeed https://github.com/koshev-msk/modemfeed.git' >> feeds.conf.default
 
           # Clone theme packages
           git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git package/feeds/luci/luci-app-argon-config
           git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git package/feeds/luci/luci-theme-argon
 
-          # Clone OpenClash
-          git clone -b dev --depth=1 https://github.com/vernesong/OpenClash package/feeds/luci/openclash
-
           # Update and install feeds
           ./scripts/feeds update -a && ./scripts/feeds install -a
 
-          # Apply config
+          # Apply config, then enable ccache (must append AFTER cp to avoid being overwritten)
           cp /tmp/.config .config
+          echo 'CONFIG_DEVEL=y' >> .config
+          echo 'CONFIG_CCACHE=y' >> .config
           make defconfig
 
           # Show what make defconfig changed (debug: detect silently removed packages)
@@ -215,7 +213,7 @@ jobs:
           grep -c '^CONFIG_PACKAGE_.*=m' .config || true
 
           # Verify key packages are still enabled
-          for pkg in luci luci-base luci-theme-bootstrap luci-app-firewall luci-app-ssr-plus luci-app-openclash; do
+          for pkg in luci luci-base luci-theme-bootstrap luci-app-firewall luci-app-ssr-plus; do
             if grep -q "^CONFIG_PACKAGE_${pkg}=y" .config; then
               echo "OK: ${pkg} is enabled"
             else
