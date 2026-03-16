@@ -174,7 +174,7 @@ jobs:
           ccache: true
           toolchain: true
           mixkey: ${{ matrix.cache_key }}
-          skip: ${{ !inputs.clean_build || true }}
+          skip: ${{ inputs.clean_build || false }}
           clean: ${{ inputs.clean_build || false }}
 
       - name: Setup SSH Debug Session
@@ -204,10 +204,8 @@ jobs:
           # Update and install feeds
           ./scripts/feeds update -a && ./scripts/feeds install -a
 
-          # Apply config, then append ccache settings (cp must come first)
+          # Apply config
           cp /tmp/.config .config
-          echo 'CONFIG_DEVEL=y' >> .config
-          echo 'CONFIG_CCACHE=y' >> .config
           make defconfig
 
           # Show what make defconfig changed (debug: detect silently removed packages)
