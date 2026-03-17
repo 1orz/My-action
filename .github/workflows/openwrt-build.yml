@@ -200,6 +200,10 @@ jobs:
           # Update and install feeds
           ./scripts/feeds update -a && ./scripts/feeds install -a
 
+          # Fix Rust LLVM: download-ci-llvm=true is rejected on CI, and pre-built artifacts may 404
+          sed -i 's/download-ci-llvm=true/download-ci-llvm=false/g' \
+            feeds/packages/lang/rust/Makefile 2>/dev/null || true
+
           # Apply config, then enable ccache (must append AFTER cp to avoid being overwritten)
           cp /tmp/.config .config
           echo 'CONFIG_DEVEL=y' >> .config

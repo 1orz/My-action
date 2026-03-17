@@ -87,9 +87,9 @@ echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config
 log_info "生成默认配置..."
 make defconfig
 
-# 修复 Rust LLVM 设置 (Rust 1.90+ 在 CI 上不允许 download-ci-llvm=true)
+# 修复 Rust LLVM 设置 (download-ci-llvm=true 在 CI 上被拒绝，且预编译 artifact 可能已过期 404)
 log_info "修复 Rust LLVM 配置..."
-sed -i 's/download-ci-llvm=true/download-ci-llvm=if-unchanged/g' \
+sed -i 's/download-ci-llvm=true/download-ci-llvm=false/g' \
     feeds/packages/lang/rust/Makefile 2>/dev/null || true
 
 # 显示磁盘空间
