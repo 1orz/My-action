@@ -15,7 +15,7 @@ command -v gh >/dev/null 2>&1 || { echo "gh CLI not installed" >&2; exit 1; }
 
 echo "Cleaning repo: $repo (keep $keep per action)"
 
-prefixes=("openwrt-x86-64-" "openwrt-armsr-aarch64-" "openwrt-mipsel-redmi-ac2100-" "openwrt-arm64-tr3000-" "openwrt-arm64-glinet-mt3000-")
+prefixes=("openwrt-x86-64-" "openwrt-armsr-aarch64-" "openwrt-mips-redmi-ac2100-" "openwrt-arm64-tr3000-" "openwrt-arm64-glinet-mt3000-")
 workflow_file="openwrt-build.yml"
 
 echo -e "\n=== Cleaning Releases ==="
@@ -35,7 +35,7 @@ for prefix in "${prefixes[@]}"; do
 done
 
 echo -e "\n=== Cleaning Orphan Releases ==="
-jq_filter='(.tagName | startswith("openwrt-x86-64-") | not) and (.tagName | startswith("openwrt-armsr-aarch64-") | not) and (.tagName | startswith("openwrt-mipsel-redmi-ac2100-") | not) and (.tagName | startswith("openwrt-arm64-tr3000-") | not) and (.tagName | startswith("openwrt-arm64-glinet-mt3000-") | not)'
+jq_filter='(.tagName | startswith("openwrt-x86-64-") | not) and (.tagName | startswith("openwrt-armsr-aarch64-") | not) and (.tagName | startswith("openwrt-mips-redmi-ac2100-") | not) and (.tagName | startswith("openwrt-arm64-tr3000-") | not) and (.tagName | startswith("openwrt-arm64-glinet-mt3000-") | not)'
 orphan_releases=$(echo "$all_releases" | jq -c "[.[] | select($jq_filter)]")
 total_orphans=$(echo "$orphan_releases" | jq 'length')
 

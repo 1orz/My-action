@@ -1,0 +1,35 @@
+name: Cleanup Old Builds
+
+on:
+  workflow_run:
+    workflows: ["OpenWrt Build"]
+    types:
+      - completed
+
+  schedule:
+    - cron: "30 3 * * *"
+
+  workflow_dispatch:
+    inputs:
+      keep_count:
+        description: "Number of releases to keep per target"
+        required: false
+        type: number
+        default: 3
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@main
+
+      - name: Run Cleanup
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x cleanup_per_action.sh
+          ./cleanup_per_action.sh "${{ github.repository }}" "${{ inputs.keep_count || 3 }}"
