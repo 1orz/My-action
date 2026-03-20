@@ -15,7 +15,7 @@ command -v gh >/dev/null 2>&1 || { echo "gh CLI not installed" >&2; exit 1; }
 
 echo "Cleaning repo: $repo (keep $keep per action)"
 
-prefixes=("openwrt-x86-64-" "openwrt-armsr-aarch64-" "openwrt-mips-redmi-ac2100-" "openwrt-arm64-tr3000-" "openwrt-arm64-glinet-mt3000-")
+prefixes=("openwrt-x86-64-" "openwrt-armsr-aarch64-" "openwrt-mips-redmi-ac2100-" "openwrt-mips-xiaomi-ac2100-" "openwrt-arm64-tr3000-" "openwrt-arm64-glinet-mt3000-")
 workflow_file="openwrt-build.yml"
 
 echo -e "\n=== Cleaning Releases ==="

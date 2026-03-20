@@ -24,6 +24,7 @@ on:
           - arm64-glinet-mt3000
           - armsr-aarch64
           - mips-redmi-ac2100
+          - mips-xiaomi-ac2100
           - x86-x64
         default: "all"
 
@@ -84,6 +85,14 @@ jobs:
             cache_key: openwrt_mips_redmi_ac2100
             pkg_arch: mipsel_24kc
             release_prefix: openwrt-mips-redmi-ac2100
+            with_openclash: false
+            extra_files_pattern: ""
+
+          - name: mips-xiaomi-ac2100
+            config_file: openwrt/mips-xiaomi-ac2100.config
+            cache_key: openwrt_mips_xiaomi_ac2100
+            pkg_arch: mipsel_24kc
+            release_prefix: openwrt-mips-xiaomi-ac2100
             with_openclash: false
             extra_files_pattern: ""
 
@@ -193,9 +202,8 @@ jobs:
           sed -i '1i src-git passwall_packages https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git;main' feeds.conf.default
           sed -i '1i src-git helloworld https://github.com/fw876/helloworld.git;master' feeds.conf.default
 
-          # Clone theme packages
-          # git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git package/feeds/luci/luci-app-argon-config
-          # git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git package/feeds/luci/luci-theme-argon
+          # Clone packages
+          git clone --depth=1 https://github.com/Openwrt-Passwall/openwrt-passwall2.git package/feeds/luci/openwrt-passwall2
 
           # Update and install feeds
           ./scripts/feeds update -a && ./scripts/feeds install -a
