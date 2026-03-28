@@ -59,7 +59,7 @@ jobs:
           - name: arm64-tr3000
             config_file: openwrt/arm64-tr3000.config
             cache_key: openwrt_arm64_tr3000
-            pkg_arch: aarch64_generic
+            pkg_arch: aarch64_cortex-a53
             release_prefix: openwrt-arm64-tr3000
             with_openclash: true
             extra_files_pattern: "mt79*"
@@ -67,7 +67,7 @@ jobs:
           - name: arm64-glinet-mt3000
             config_file: openwrt/arm64-glinet-mt3000.config
             cache_key: openwrt_arm64_glinet_mt3000
-            pkg_arch: aarch64_generic
+            pkg_arch: aarch64_cortex-a53
             release_prefix: openwrt-arm64-glinet-mt3000
             with_openclash: true
             extra_files_pattern: "mt79*"
