@@ -289,50 +289,46 @@ jobs:
             (cd pkgs && zip -r -o -q -9 "../packages_${ts}.zip" packages)
           fi
 
-      - name: Create GitHub Release
+      - name: Publish Release
         if: steps.check.outputs.should_build == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}" \
-            --title "${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}" \
-            --notes "OpenWrt firmware build for **${{ matrix.name }}**
-
-          - Commit: ${{ github.sha }}
-          - Branch: openwrt-25.12
-          - Build Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" \
-            --draft \
-            -R "${{ github.repository }}"
-
-      - name: Upload Release Assets
-        if: steps.check.outputs.should_build == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}
+          REPO: ${{ github.repository }}
         run: |
           set -eux
           shopt -s nullglob
 
-          # Upload images
+          # If anything below fails, remove the partial release so it can't get stuck as a draft.
+          cleanup_on_failure() {
+            local code=$?
+            if [ $code -ne 0 ]; then
+              echo "Release step failed (exit $code); removing partial release $TAG"
+              gh release delete "$TAG" -R "$REPO" --cleanup-tag -y 2>/dev/null || true
+            fi
+          }
+          trap cleanup_on_failure EXIT
+
           files=(images/*)
           if [ ${#files[@]} -eq 0 ]; then
             echo "No firmware files found" >&2
             exit 1
           fi
-          echo "Uploading firmware files:"
-          ls -lh images/
-          gh release upload "${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}" "${files[@]}" \
-            -R "${{ github.repository }}" --clobber
 
-          # Upload packages zip if exists
-          if [ -f "packages_${{ env.RELEASE_TS }}.zip" ]; then
-            gh release upload "${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}" \
-              "packages_${{ env.RELEASE_TS }}.zip" -R "${{ github.repository }}" --clobber
+          if [ -f "packages_${RELEASE_TS}.zip" ]; then
+            files+=("packages_${RELEASE_TS}.zip")
           fi
 
-      - name: Publish Release
-        if: steps.check.outputs.should_build == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release edit "${{ matrix.release_prefix }}-${{ env.RELEASE_TS }}" \
-            --draft=false --latest -R "${{ github.repository }}"
+          echo "Uploading assets:"
+          printf '  %s\n' "${files[@]}"
+
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes "OpenWrt firmware build for **${{ matrix.name }}**
+
+          - Commit: ${{ github.sha }}
+          - Branch: openwrt-25.12
+          - Build Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" \
+            --latest \
+            -R "$REPO" \
+            "${files[@]}"

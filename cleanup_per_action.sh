@@ -16,17 +16,19 @@ command -v gh >/dev/null 2>&1 || { echo "gh CLI not installed" >&2; exit 1; }
 echo "Cleaning repo: $repo (keep $keep per action)"
 
 prefixes=("openwrt-x86-64-" "openwrt-armsr-aarch64-" "openwrt-mips-redmi-ac2100-" "openwrt-mips-xiaomi-ac2100-" "openwrt-arm64-tr3000-" "openwrt-arm64-glinet-mt3000-")
-workflow_file="openwrt-build.yml"
+workflow_files=("openwrt-build.yml" "cleanup.yml")
 
 echo -e "\n=== Cleaning Releases ==="
-all_releases=$(gh release list -R "$repo" --limit 400 --json tagName,createdAt)
+# Sort by tagName: each tag embeds YYYYMMDDHHMMSS, so string order == chronological order.
+# Avoids the GitHub API quirk where published releases share the underlying commit's createdAt.
+all_releases=$(gh release list -R "$repo" --limit 400 --json tagName)
 
 for prefix in "${prefixes[@]}"; do
   echo "Processing prefix: $prefix"
-  
-  workflow_releases=$(echo "$all_releases" | jq -c "[.[] | select(.tagName | startswith(\"$prefix\"))] | sort_by(.createdAt) | reverse")
+
+  workflow_releases=$(echo "$all_releases" | jq -c "[.[] | select(.tagName | startswith(\"$prefix\"))] | sort_by(.tagName) | reverse")
   total=$(echo "$workflow_releases" | jq 'length')
-  
+
   if [[ "$total" -gt "$keep" ]]; then
     echo "$workflow_releases" | jq -r ".[$keep:][] | .tagName" | while read -r tag; do
       gh release delete "$tag" -R "$repo" -y --cleanup-tag 2>&1 && echo "  Deleted: $tag" || echo "  Failed: $tag"
@@ -59,52 +61,62 @@ if [[ -n "$all_tags" ]]; then
   done <<< "$all_tags"
 fi
 
-echo -e "\n=== Cleaning Workflow Runs (Keep $keep Success) ==="
+total_deleted_runs=0
 
-workflow_runs=$(gh api -H "Accept: application/vnd.github+json" \
-  "repos/$repo/actions/workflows/$workflow_file/runs?per_page=100" \
-  --paginate 2>/dev/null || echo '{"workflow_runs":[]}')
+for workflow_file in "${workflow_files[@]}"; do
+  echo -e "\n=== Cleaning Workflow Runs: $workflow_file (Keep $keep Success) ==="
 
-all_runs=$(echo "$workflow_runs" | jq -s '[.[] | (.workflow_runs // [])[] | {id, created_at, status, conclusion}] | sort_by(.created_at) | reverse')
+  workflow_runs=$(gh api -H "Accept: application/vnd.github+json" \
+    "repos/$repo/actions/workflows/$workflow_file/runs?per_page=100" \
+    --paginate 2>/dev/null || echo '{"workflow_runs":[]}')
 
-success_runs=$(echo "$all_runs" | jq -c '[.[] | select(.conclusion == "success")]')
-failed_runs=$(echo "$all_runs" | jq -c '[.[] | select(.conclusion != "success")]')
+  all_runs=$(echo "$workflow_runs" | jq -s '[.[] | (.workflow_runs // [])[] | {id, created_at, status, conclusion}] | sort_by(.created_at) | reverse')
 
-success_count=$(echo "$success_runs" | jq 'length')
-failed_count=$(echo "$failed_runs" | jq 'length')
+  success_runs=$(echo "$all_runs" | jq -c '[.[] | select(.conclusion == "success")]')
+  success_count=$(echo "$success_runs" | jq 'length')
+  failed_count=$(echo "$all_runs" | jq -c '[.[] | select(.conclusion != "success")]' | jq 'length')
 
-echo "Total runs - Success: $success_count, Failed/Other: $failed_count"
+  echo "Total runs - Success: $success_count, Failed/Other: $failed_count"
 
-if [[ "$success_count" -ge "$keep" ]]; then
-  to_keep_ids=$(echo "$success_runs" | jq -r ".[0:$keep][] | .id")
-else
-  to_keep_ids=$(echo "$success_runs" | jq -r '.[] | .id')
-fi
-
-total_runs=$(echo "$all_runs" | jq 'length')
-deleted=0
-
-for ((idx=0; idx<total_runs; idx++)); do
-  item=$(echo "$all_runs" | jq -c ".[$idx]")
-  run_id=$(echo "$item" | jq -r '.id')
-  status=$(echo "$item" | jq -r '.status')
-  conclusion=$(echo "$item" | jq -r '.conclusion')
-  
-  if echo "$to_keep_ids" | grep -q "^${run_id}$"; then
-    continue
+  if [[ "$success_count" -ge "$keep" ]]; then
+    to_keep_ids=$(echo "$success_runs" | jq -r ".[0:$keep][] | .id")
+  else
+    to_keep_ids=$(echo "$success_runs" | jq -r '.[] | .id')
   fi
-  
-  if [[ "$status" == "completed" ]]; then
-    if gh api -X DELETE "/repos/$repo/actions/runs/$run_id" 2>/dev/null; then
-      echo "  Deleted: run $run_id ($conclusion)"
-      ((deleted++))
-      sleep 0.5
-    else
-      echo "  Failed: run $run_id (may lack permission)"
+
+  total_runs=$(echo "$all_runs" | jq 'length')
+  deleted=0
+
+  for ((idx=0; idx<total_runs; idx++)); do
+    item=$(echo "$all_runs" | jq -c ".[$idx]")
+    run_id=$(echo "$item" | jq -r '.id')
+    status=$(echo "$item" | jq -r '.status')
+    conclusion=$(echo "$item" | jq -r '.conclusion')
+
+    if echo "$to_keep_ids" | grep -q "^${run_id}$"; then
+      continue
     fi
-  fi
-done || true
 
-echo "Deleted $deleted workflow runs"
+    # Skip the currently executing run (e.g. cleanup.yml deleting itself).
+    if [[ -n "${GITHUB_RUN_ID:-}" && "$run_id" == "$GITHUB_RUN_ID" ]]; then
+      continue
+    fi
+
+    if [[ "$status" == "completed" ]]; then
+      if gh api -X DELETE "/repos/$repo/actions/runs/$run_id" 2>/dev/null; then
+        echo "  Deleted: run $run_id ($conclusion)"
+        ((deleted++))
+        sleep 0.5
+      else
+        echo "  Failed: run $run_id (may lack permission)"
+      fi
+    fi
+  done || true
+
+  echo "Deleted $deleted runs from $workflow_file"
+  total_deleted_runs=$((total_deleted_runs + deleted))
+done
+
+echo "Deleted $total_deleted_runs workflow runs in total"
 
 echo -e "\n=== Cleanup Complete ==="
